@@ -1,0 +1,2091 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Chem Battle Pitch Deck</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* --- ตั้งค่าพื้นฐาน --- */
+        * { box-sizing: border-box; }
+        body {
+            background-color: #2a2a2a; 
+            display: flex; 
+            flex-direction: column;
+            margin: 0; 
+            padding: 0; 
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- กรอบสไลด์หลัก (True Full Screen 100% ไร้ขอบ) --- */
+        .slide-container {
+            background-color: #faf9f6; 
+            display: flex; 
+            flex-direction: column;
+            font-family: 'Kanit', sans-serif; 
+            height: 100vh; 
+            width: 100vw;  
+            padding: 6vh 8vw; 
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            overflow: hidden;
+            border-top: 12px solid #e04f33; 
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .slide-container.active { opacity: 1; pointer-events: auto; z-index: 10; }
+
+        /* --- ของตกแต่งพื้นหลัง --- */
+        .bg-pattern {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;
+            background-image: radial-gradient(#e04f33 1px, transparent 1px); 
+            background-size: 40px 40px;
+            opacity: 0.03; 
+            pointer-events: none;
+        }
+        .bg-blob { position: absolute; border-radius: 50%; filter: blur(100px); z-index: 0; opacity: 0.2; }
+        .bg-blob.orange { width: 500px; height: 500px; background: #e04f33; top: -200px; left: -200px; }
+        .bg-blob.yellow { width: 400px; height: 400px; background: #ffb74d; bottom: -150px; right: -150px; }
+
+        /* ทำให้ Slide Content เป็น Relative เพื่อกันให้ Z-index ทำงานถูกต้อง */
+        .slide-content { position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%; width: 100%; max-width: 1500px; margin: 0 auto; flex-grow: 1; }
+
+        /* --- ตัวอักษร --- */
+        h1, h2, h3 { color: #e04f33; font-weight: 700; margin: 0; }
+        p, li, span { color: #4a4a4a; font-weight: 400; line-height: 1.6; font-size: 22px; margin: 0 0 15px 0; }
+        
+        .title-main { font-size: 100px; text-transform: uppercase; letter-spacing: 2px; text-align: center; text-shadow: 0 15px 30px rgba(224, 79, 51, 0.15); margin-bottom: 20px;}
+        .subtitle-main { 
+            font-size: 36px; font-weight: 600; color: #e04f33; text-align: center; display: inline-block;
+        }
+        
+        .slide-title { font-size: 46px; margin-bottom: 40px; position: relative; display: inline-block; align-self: flex-start; }
+        .slide-title::after {
+            content: ''; position: absolute; left: 0; bottom: -10px; width: 80px; height: 6px;
+            background-color: #e04f33; border-radius: 10px;
+        }
+
+        /* --- เลย์เอาต์ทั่วไป --- */
+        .center-layout { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+        .grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; height: 100%; }
+        .grid-2-col-text-heavy { grid-template-columns: 1.2fr 0.8fr; }
+        
+        /* --- กล่องและการ์ด --- */
+        .card {
+            background: #ffffff; border-radius: 20px; padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #f0f0f0;
+            display: flex; flex-direction: column; height: 100%;
+            position: relative; overflow: hidden; 
+        }
+        .card-icon {
+            color: #e04f33; font-size: 40px; margin-bottom: 20px;
+            background: #fff3ee; width: 80px; height: 80px; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .card-icon.red { color: #ef4444; background: #fef2f2; }
+        .card-icon.orange { color: #f97316; background: #fff7ed; }
+        .card-icon.yellow { color: #eab308; background: #fefce8; }
+        .card.summative { border-top: 6px solid #f59e0b; }
+        .card.summative .card-icon { color: #f59e0b; background: #fffbeb; }
+        .card.formative { border-top: 6px solid #e04f33; }
+        .card.mastery { border-top: 6px solid #ef4444; }
+
+        /* --- ลิสต์รายการของหน้า 2 --- */
+        .clean-list { list-style: none; padding: 0; margin: 0; position: relative; }
+        .clean-list li {
+            background: #ffffff; border-radius: 16px; padding: 25px;
+            margin-bottom: 20px; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            border: 1px solid #f0f0f0; font-size: 20px; display: flex; align-items: flex-start; gap: 20px;
+            border-left: 8px solid transparent; 
+        }
+        .clean-list li i {
+            color: #ffffff; background: #e04f33; width: 50px; height: 50px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; font-size: 20px;
+            flex-shrink: 0; box-shadow: 0 4px 10px rgba(224,79,51,0.2);
+        }
+        .clean-list .text-content { display: flex; flex-direction: column; width: 100%; }
+        .clean-list strong { color: #e04f33; font-weight: 600; font-size: 24px; margin-bottom: 5px; }
+        .clean-list span { font-size: 18px; color: #666; margin: 0; }
+
+        /* --- INTERACTIVE CARDS --- */
+        .problems-overlay {
+            position: absolute; top: -20vh; left: -20vw; right: -20vw; bottom: -20vh;
+            background: rgba(250, 249, 246, 0.95); z-index: 100;
+            opacity: 0; pointer-events: none; transition: opacity 0.8s ease;
+        }
+        .problems-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .problems-grid {
+            display: flex; gap: 30px; width: 100%; height: 420px; align-items: stretch; position: relative;
+        }
+        
+        .problem-card {
+            flex: 1; background: #ffffff; border-radius: 20px; padding: 40px 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #f0f0f0; border-top: 8px solid #e04f33;
+            display: flex; flex-direction: row; overflow: hidden; cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+        .problem-card:hover:not(.is-fixed) { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(224, 79, 51, 0.12); }
+        
+        .problem-card.red-border { border-top-color: #ef4444; }
+        .problem-card.orange-border { border-top-color: #f97316; }
+        .problem-card.yellow-border { border-top-color: #eab308; }
+        .problem-card.blue-border { border-top-color: #3b82f6; }
+
+        .problem-card.is-fixed {
+            position: fixed !important; z-index: 1001 !important; margin: 0 !important;
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1) !important;
+        }
+        .problem-card.expanded {
+            border-radius: 30px !important; box-shadow: 0 30px 80px rgba(0,0,0,0.2) !important; cursor: default !important;
+        }
+
+        .problem-card .card-front {
+            width: 100%; min-width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center;
+            transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .problem-card.is-fixed .card-front {
+            width: 35%; min-width: 35%; padding-right: 60px; justify-content: center; align-items: flex-start; text-align: left;
+        }
+        
+        .problem-card .card-details {
+            display: none; padding: 40px;
+        }
+        .problem-card.is-fixed .card-details {
+            display: flex; flex-direction: column; justify-content: center; width: 65%; min-width: 65%; padding-left: 60px; border-left: 2px dashed #ffccbc; 
+        }
+
+        .problem-card .card-front, .problem-card .card-details { opacity: 1; transition: opacity 0.3s ease; }
+        .problem-card.hide-texts .card-front, .problem-card.hide-texts .card-details { opacity: 0 !important; transition: opacity 0.2s ease !important; }
+
+        .problem-card .card-icon {
+            color: #e04f33; font-size: 40px; margin-bottom: 20px; background: #fff3ee; width: 80px; height: 80px; border-radius: 16px; display: flex; align-items: center; justify-content: center;
+        }
+        .problem-card .card-icon.red { color: #ef4444; background: #fef2f2; }
+        .problem-card .card-icon.orange { color: #f97316; background: #fff7ed; }
+        .problem-card .card-icon.yellow { color: #eab308; background: #fefce8; }
+        .problem-card .card-icon.blue { color: #3b82f6; background: #eff6ff; }
+        
+        .click-hint {
+            margin-top: auto; padding-top: 15px; font-size: 16px; color: #e04f33; font-weight: 500; opacity: 0; transition: opacity 0.3s; display: flex; align-items: center; gap: 8px; justify-content: center; width: 100%;
+        }
+        .problem-card:hover .click-hint { opacity: 1; }
+        .problem-card.is-fixed .click-hint { display: none; }
+        
+        .close-detail-btn {
+            margin-top: 40px; align-self: flex-start; background: #fff3ee; color: #e04f33; border: none; padding: 15px 40px; border-radius: 50px; font-size: 20px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'Kanit', sans-serif; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(224, 79, 51, 0.1);
+        }
+        .close-detail-btn:hover { background: #e04f33; color: white; transform: scale(1.05); }
+
+        /* --- LADDER Grid --- */
+        .ladder-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; width: 100%; }
+        .ladder-card { 
+            background: #ffffff; border-radius: 16px; padding: 40px 30px; box-shadow: 0 8px 20px rgba(0,0,0,0.03); border-top: 5px solid #e04f33; position: relative; overflow: hidden;
+        }
+        .ladder-card::after {
+            content: ''; position: absolute; top: 0; right: 0; width: 60px; height: 60px; background: #fff3ee; border-radius: 0 0 0 100%; z-index: 0;
+        }
+        .ladder-card > * { position: relative; z-index: 1; }
+        .ladder-card .letter { font-size: 36px; font-weight: 800; color: #e04f33; margin-bottom: 10px; line-height: 1; }
+        .ladder-card h4 { font-size: 24px; color: #2a2a2a; margin-bottom: 15px; font-weight: 600; }
+        .ladder-card p { font-size: 18px; margin: 0; line-height: 1.6; color: #555; }
+
+        /* --- กรอบรูปภาพพรีเมียม --- */
+        .img-box {
+            background: #fdfbf9; border-radius: 24px; border: 2px dashed #ffccbc; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 450px; width: 100%; color: #ff8a65; 
+        }
+        .img-box i { font-size: 90px; margin-bottom: 20px; opacity: 0.5; }
+        .img-box span { font-size: 22px; font-weight: 500; }
+        
+        .img-box.premium {
+            background: linear-gradient(135deg, #fff5f0 0%, #ffe3d1 100%); border: none; box-shadow: inset 0 0 30px rgba(255,255,255,0.6), 0 15px 30px rgba(224, 79, 51, 0.1);
+            padding: 15px; position: relative; overflow: hidden;
+        }
+        .img-box.premium img, .img-box.premium video {
+            width: 100%; height: 100%; object-fit: cover; border-radius: 18px; box-shadow: 0 10px 30px rgba(224, 79, 51, 0.25);
+        }
+
+        /* --- หน้า 6: TIMELINE V4 --- */
+        .timeline-wrapper-v2 {
+            position: relative; width: 100%; flex-grow: 1; display: flex; align-items: center; justify-content: space-around; margin-top: 20px; transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1); padding: 0 40px; 
+        }
+        .timeline-wrapper-v2 .t-line { position: absolute; top: 50%; left: 0; right: 0; height: 6px; background: #ffccbc; transform: translateY(-50%); z-index: 0; border-radius: 10px; }
+        .timeline-wrapper-v2 .t-node { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; width: 240px; cursor: pointer; transition: transform 0.3s; }
+        .timeline-wrapper-v2 .t-node:hover { transform: scale(1.05); }
+        .timeline-wrapper-v2 .t-circle {
+            width: 70px; height: 70px; border-radius: 50%; background: white; border: 6px solid #e04f33; color: #e04f33; display: flex; align-items: center; justify-content: center;
+            font-size: 28px; font-weight: bold; box-shadow: 0 0 0 6px #faf9f6, 0 10px 20px rgba(224,79,51,0.2); z-index: 2; transition: all 0.3s ease; margin-bottom: 10px;
+        }
+        .timeline-wrapper-v2 .t-node:hover .t-circle { background: #e04f33; color: white; }
+        
+        .timeline-wrapper-v2 .t-text { text-align: center; transition: opacity 0.3s, transform 0.3s; background: rgba(250,249,246,0.9); padding: 5px; border-radius: 10px; z-index: 3; position: relative; }
+        .timeline-wrapper-v2 .t-text h4 { font-size: 28px; color: #e04f33; margin-bottom: 5px;}
+        .timeline-wrapper-v2 .t-text p { font-size: 18px; color: #666; font-weight: 500; margin: 0; }
+        
+        .timeline-wrapper-v2 .t-node.top { top: -110px; } 
+        .timeline-wrapper-v2 .t-node.top .t-text { margin-top: 15px; }
+        .timeline-wrapper-v2 .t-node.top::after { content: ''; position: absolute; bottom: -110px; left: 50%; transform: translateX(-50%); width: 4px; height: 110px; background: #e04f33; z-index: -1; }
+        .timeline-wrapper-v2 .t-node.top::before { content: ''; position: absolute; bottom: -116px; left: 50%; transform: translateX(-50%); width: 16px; height: 16px; background: #e04f33; border-radius: 50%; z-index: 2; }
+        
+        .timeline-wrapper-v2 .t-node.bottom { top: 110px; flex-direction: column-reverse; } 
+        .timeline-wrapper-v2 .t-node.bottom .t-circle { margin-bottom: 0; margin-top: 10px; }
+        .timeline-wrapper-v2 .t-node.bottom .t-text { margin-bottom: 15px; }
+        .timeline-wrapper-v2 .t-node.bottom::after { content: ''; position: absolute; top: -110px; left: 50%; transform: translateX(-50%); width: 4px; height: 110px; background: #e04f33; z-index: -1; }
+        .timeline-wrapper-v2 .t-node.bottom::before { content: ''; position: absolute; top: -116px; left: 50%; transform: translateX(-50%); width: 16px; height: 16px; background: #e04f33; border-radius: 50%; z-index: 2; }
+        
+        .click-hint-t { font-size: 16px; color: #e04f33; opacity: 0; transition: opacity 0.3s; background: #fff3ee; padding: 6px 16px; border-radius: 20px; font-weight: 600; }
+        .timeline-wrapper-v2 .t-node:hover .click-hint-t { opacity: 1; }
+        .timeline-wrapper-v2 .t-node.top .click-hint-t { margin-bottom: 15px; }
+        .timeline-wrapper-v2 .t-node.bottom .click-hint-t { margin-top: 15px; }
+
+        .slide-6.expanded .timeline-wrapper-v2 { opacity: 0; pointer-events: none; transform: scale(0.8) translateY(50px); }
+        .timeline-wrapper-v2.hide-texts .t-text, .timeline-wrapper-v2.hide-texts .t-circle, .timeline-wrapper-v2.hide-texts .click-hint-t { opacity: 0; transform: translateY(15px); }
+
+        .timeline-details-container { position: absolute; top: 160px; left: 8vw; right: 8vw; bottom: 8vh; opacity: 0; pointer-events: none; transition: all 1s cubic-bezier(0.25, 1, 0.5, 1); transform: translateY(30px); }
+        .slide-6.expanded .timeline-details-container { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        
+        .detail-view { display: none; width: 100%; height: 100%; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; background: #ffffff; border-radius: 24px; padding: 60px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); border-left: 10px solid #e04f33; }
+        .detail-view.active { display: grid; }
+        .detail-text { opacity: 1; transform: translateY(0); transition: all 0.4s ease; }
+        .detail-view.hide-texts .detail-text { opacity: 0; transform: translateY(20px); }
+
+        /* --- หน้า 8: วงจรแพ้ทาง --- */
+        .triangle-container { display: flex; align-items: center; justify-content: center; width: 100%; height: 420px; position: relative;}
+        .nodes-row { display: flex; align-items: stretch; justify-content: center; gap: 30px; width: 100%; z-index: 2; }
+        .arrow-right { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #e04f33; font-weight: bold; width: 100px; transition: opacity 0.3s; }
+        .arrow-right i { font-size: 35px; margin-bottom: 5px; }
+        .arrow-right span { font-size: 16px; background: #fff3ee; padding: 6px 15px; border-radius: 12px; }
+        
+        .problems-grid.has-active .arrow-right { opacity: 0; pointer-events: none;}
+        .problems-grid.has-active .return-path { opacity: 0; pointer-events: none;}
+
+        .return-path { width: 750px; height: 80px; border: 4px dashed #ffccbc; border-top: none; border-radius: 0 0 40px 40px; position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%); z-index: 1; transition: opacity 0.3s; }
+        .return-path-text { position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); background: #faf9f6; padding: 0 20px; color: #e04f33; font-weight: 600; font-size: 20px; }
+        .return-path-arrow { position: absolute; left: -16px; top: -20px; color: #ffccbc; font-size: 40px; }
+
+        /* --- ปุ่ม Navigation และ โลโก้ --- */
+        .nav-btn {
+            position: fixed; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); color: #e04f33; border: none; border-radius: 50%; width: 70px; height: 70px; font-size: 28px; cursor: pointer; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;
+        }
+        .nav-btn:hover { background: #e04f33; color: white; transform: translateY(-50%) scale(1.1); }
+        .nav-btn.left { left: 40px; }
+        .nav-btn.right { right: 40px; }
+        .nav-btn:disabled { opacity: 0; pointer-events: none; }
+        
+        .slide-counter { position: fixed; bottom: 20px; right: 40px; z-index: 100; color: rgba(255,255,255,0.6); font-family: 'Kanit', sans-serif; font-size: 18px; }
+
+        .event-badge { position: absolute; bottom: 6vh; left: 50%; transform: translateX(-50%); font-size: 28px; font-weight: 500; color: #e04f33; letter-spacing: 1px; z-index: 2; }
+
+        /* --- โลโก้บางมด เลื่อนขวา --- */
+        .bangmod-logo-container { 
+            position: absolute; top: 5vh; left: 5vw; display: flex; flex-direction: column; align-items: center; 
+            cursor: help; z-index: 1000; pointer-events: auto;
+            transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            transform-origin: top left;
+        }
+        .bangmod-logo-container.minimized {
+            transform: translate(calc(90vw - 220px), 0) scale(1); 
+        }
+        .bangmod-logo-container img { width: auto; height: 90px; border-radius: 16px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); transition: transform 0.3s ease; }
+        .bangmod-logo-container:hover img { transform: scale(1.05); }
+
+        .master-overlay {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; pointer-events: none; z-index: 1000; transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1); 
+        }
+        .master-overlay.hidden-logo { opacity: 0 !important; }
+
+        .school-logo-container { position: absolute; top: 5vh; right: 5vw; display: flex; flex-direction: column; align-items: center; pointer-events: auto; cursor: help; }
+        .school-logo-container img { width: 110px; height: auto; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.15)); transition: transform 0.4s ease; }
+        .school-logo-container:hover img { transform: scale(1.15) rotate(5deg); }
+        
+        .watermark-icon { position: absolute; font-size: 250px; color: #fff3ee; z-index: 0; bottom: -50px; right: -50px; transform: rotate(-15deg); opacity: 0.6; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+<button id="prevBtn" class="nav-btn left" disabled><i class="fa-solid fa-chevron-left"></i></button>
+<button id="nextBtn" class="nav-btn right"><i class="fa-solid fa-chevron-right"></i></button>
+<div class="slide-counter" id="slideCounter">1 / 13</div>
+
+<div class="master-overlay" id="masterOverlay">
+    <div class="school-logo-container">
+        <img src="spr_logo.png" alt="Saipanyarangsit School Logo" onerror="this.src='https://placehold.co/100x120/ffffff/e04f33?text=Logo'">
+    </div>
+    <div class="bangmod-logo-container" id="bangmodLogo">
+        <img src="bm.jpg" alt="Bangmod Logo" onerror="this.src='https://placehold.co/150x90/ffffff/e04f33?text=BM+Logo'">
+    </div>
+</div>
+
+<div class="slide-container active" id="slide1">
+    <div class="bg-pattern"></div>
+    <div class="bg-blob orange"></div>
+    <div class="bg-blob yellow"></div>
+    
+    <div class="slide-content center-layout" style="z-index: 2;">
+        <h1 class="title-main">Ultimate Chem Battle</h1>
+        <div class="subtitle-main">
+            <i class="fa-solid fa-users" style="margin-right: 15px;"></i> Blind leading the Blind
+        </div>
+    </div>
+    
+    <div class="event-badge">Bangmod Hackathon Orange Winter</div>
+</div>
+
+<div class="slide-container" id="slide2">
+    <div class="bg-pattern"></div>
+    <div class="bg-blob yellow" style="top: -100px; right: -100px;"></div>
+    <div class="slide-content">
+        <h2 class="slide-title">จุดเริ่มต้นจากประสบการณ์จริง</h2>
+        <div class="grid-2-col grid-2-col-text-heavy">
+            <div>
+                <p style="font-size: 26px; color: #e04f33; font-weight: 600; margin-bottom: 30px;">"วิชาที่เรียนยาก พลาดแล้วเริ่มใหม่ และจบลงด้วยการท่องจำ"</p>
+                <ul class="clean-list" id="s2-list">
+                    <li><i class="fa-solid fa-graduation-cap"></i> <div class="text-content"><strong>ผลการเรียนที่น่าผิดหวัง:</strong> <span>เคมีต้องใช้ความเข้าใจต่อเนื่อง หากหลุดโฟกัสแล้วมักจะตามไม่ทัน</span></div></li>
+                    <li><i class="fa-solid fa-flask-vial"></i> <div class="text-content"><strong>ความกลัวในห้องแล็บ:</strong> <span>เคยทำอุปกรณ์เคมีเสียหาย ทำให้เกิดความกลัว ไม่กล้าทดลองจริง</span></div></li>
+                    <li><i class="fa-solid fa-book-skull"></i> <div class="text-content"><strong>ทางลัดที่ล้มเหลว:</strong> <span>เมื่อเวลาไม่พอ จึงเลือกใช้วิธีท่องจำ ซึ่งมักจะลืมเมื่อเจอความกดดันสอบ</span></div></li>
+                </ul>
+            </div>
+            <div class="img-box premium" id="s2-img">
+                <img src="cortisol.jpg" onerror="this.src='C:\\Users\\evoto\\OneDrive\\Desktop\\code for programming\\something\\cortisol.jpg'" alt="Cortisol Stress">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="slide-container" id="slide3">
+    <div class="bg-pattern"></div>
+    <div class="slide-content" style="position: relative; z-index: 1;">
+        <h2 class="slide-title">สรุปปัญหาหลักของวิชาเคมี</h2>
+        
+        <div class="problems-overlay" id="problemsOverlay"></div>
+
+        <div class="problems-grid" id="problemsGrid">
+            <div class="problem-card red-border" onclick="toggleProblemCard(this)">
+                <div class="card-front text-fade">
+                    <div class="card-icon red"><i class="fa-solid fa-brain"></i></div>
+                    <h3>กับดักการท่องจำ</h3>
+                    <p style="margin-top: 15px; font-size: 18px;">เนื้อหาเคมีเป็นนามธรรมสูง เมื่อเด็กหลุดโฟกัสจึงพึ่งพาการท่องจำ ซึ่งใช้งานจริงไม่ได้ในระยะยาว</p>
+                    <div class="click-hint"><i class="fa-solid fa-expand"></i> คลิกเพื่อเจาะลึก</div>
+                </div>
+                <div class="card-details text-fade">
+                    <h3 style="color: #ef4444; font-size: 50px; margin-bottom: 30px;"><i class="fa-solid fa-chart-pie"></i> เจาะลึกปัญหา: กับดักการท่องจำ</h3>
+                    <p style="font-size: 28px; line-height: 1.8;">นักเรียนส่วนใหญ่มักประสบปัญหาเมื่อเจอข้อสอบประยุกต์ เพราะการจำตารางธาตุไม่ได้ช่วยให้เข้าใจกลไกการเกิดปฏิกิริยาเคมีที่แท้จริง ทำให้เมื่อเวลาผ่านไป ความรู้เหล่านี้จะเลือนหายไปอย่างรวดเร็ว</p>
+                    <button class="close-detail-btn" onclick="event.stopPropagation(); toggleProblemCard(this.closest('.problem-card'))">
+                        <i class="fa-solid fa-compress"></i> ย้อนกลับ
+                    </button>
+                </div>
+            </div>
+
+            <div class="problem-card orange-border" onclick="toggleProblemCard(this)">
+                <div class="card-front text-fade">
+                    <div class="card-icon orange"><i class="fa-solid fa-flask-vial"></i></div>
+                    <h3>ความกลัวในห้องแล็บ</h3>
+                    <p style="margin-top: 15px; font-size: 18px;">กังวลเรื่องการทำอุปกรณ์เสียหายหรืออุบัติเหตุ ทำให้ไม่กล้าทดลองและเสียโอกาสเรียนรู้</p>
+                    <div class="click-hint"><i class="fa-solid fa-expand" style="color:#f97316;"></i> คลิกเพื่อเจาะลึก</div>
+                </div>
+                <div class="card-details text-fade">
+                    <h3 style="color: #f97316; font-size: 50px; margin-bottom: 30px;"><i class="fa-solid fa-triangle-exclamation"></i> เจาะลึกปัญหา: ความกลัวในห้องแล็บ</h3>
+                    <p style="font-size: 28px; line-height: 1.8;">สารเคมีบางชนิดมีอันตรายและอุปกรณ์เครื่องแก้วมีราคาแพง ทำให้ในชั้นเรียนจริง ผู้เรียนมักจะเกร็งและไม่กล้าที่จะลองผสมสูตรใหม่ๆ นอกเหนือจากที่คู่มือสั่ง ซึ่งเป็นการปิดกั้นความคิดสร้างสรรค์ทางวิทยาศาสตร์</p>
+                    <button class="close-detail-btn" style="color: #f97316;" onclick="event.stopPropagation(); toggleProblemCard(this.closest('.problem-card'))">
+                        <i class="fa-solid fa-compress"></i> ย้อนกลับ
+                    </button>
+                </div>
+            </div>
+
+            <div class="problem-card yellow-border" onclick="toggleProblemCard(this)">
+                <div class="card-front text-fade">
+                    <div class="card-icon yellow"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3>ขาดพื้นที่ปลอดภัย</h3>
+                    <p style="margin-top: 15px; font-size: 18px;">ไม่มีสื่อการเรียนรู้ที่เปิดโอกาสให้ผู้เรียนลองผิดลองถูก ได้อย่างอิสระโดยไม่ต้องกลัวผลลัพธ์</p>
+                    <div class="click-hint"><i class="fa-solid fa-expand" style="color:#eab308;"></i> คลิกเพื่อเจาะลึก</div>
+                </div>
+                <div class="card-details text-fade">
+                    <h3 style="color: #eab308; font-size: 50px; margin-bottom: 30px;"><i class="fa-solid fa-shield-heart"></i> เจาะลึกปัญหา: ขาดพื้นที่ปลอดภัย</h3>
+                    <p style="font-size: 28px; line-height: 1.8;">หลักการเรียนรู้แบบสร้างองค์ความรู้ เน้นให้ผู้เรียนสร้างความเข้าใจผ่านการลงมือทำ การมีพื้นที่จำลองในเกม จะช่วยให้เด็กกล้าผสมสารเคมีแปลกๆ เพื่อดูปฏิกิริยา โดยไม่มีอันตรายใดๆ เกิดขึ้นจริง</p>
+                    <button class="close-detail-btn" style="color: #eab308;" onclick="event.stopPropagation(); toggleProblemCard(this.closest('.problem-card'))">
+                        <i class="fa-solid fa-compress"></i> ย้อนกลับ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="slide-container" id="slide4">
+    <div class="bg-pattern"></div>
+    <div class="bg-blob orange" style="left: -200px; top: 200px;"></div>
+    <div class="slide-content">
+        <h2 class="slide-title">ทางออกคือ "นวัตกรรมสื่อการศึกษา"</h2>
+        <div class="grid-2-col">
+            <div>
+                <h3 style="font-size: 38px; color: #2a2a2a; margin-bottom: 25px;">เกม Auto-Battler บน Roblox</h3>
+                <p>เราสร้างทางออกด้วย <strong>Ultimate Chem Battle</strong> เพื่อเปลี่ยนความกดดันเป็นความสนุก</p>
+                <p>ผู้เรียนจะได้รับบทนักวางกลยุทธ์ สร้างตัวละครจากโมเลกุลสารเคมี จัดทีมบนกระดาน และประเมินผลผ่านการต่อสู้กับบอสอัตโนมัติ ในแพลตฟอร์มที่ทุกคนเข้าถึงได้ทันที</p>
+            </div>
+            <div class="img-box premium" id="s4-img-box">
+                <img src="int.png" onerror="this.src='C:\\Users\\evoto\\OneDrive\\Desktop\\code for programming\\something\\int.png'" alt="หน้าจอเกมเพลย์">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="slide-container" id="slide5">
+    <div class="bg-pattern"></div>
+    <div class="slide-content">
+        <h2 class="slide-title" style="margin-bottom: 40px;">ประยุกต์ LADDER Framework สู่ตัวเกม</h2>
+        <div class="ladder-grid">
+            <div class="ladder-card"><div class="letter">L</div><h4>ประสบการณ์การเรียนรู้</h4><p>ตั้งวัตถุประสงค์ให้ผู้เรียนเข้าใจเรื่องพันธะเคมี ปริมาณสาร และการดุลสมการผ่านการลงมือทำจริงในเกม</p></div>
+            <div class="ladder-card"><div class="letter">A</div><h4>การวิเคราะห์พื้นฐาน</h4><p>พบว่าเด็กกลัวห้องแล็บและท่องจำเยอะ จึงแยกย่อยเนื้อหาและออกแบบเกมให้เป็นพื้นที่ปลอดภัย</p></div>
+            <div class="ladder-card"><div class="letter">D</div><h4>การออกแบบการสอน</h4><p>แปลงทฤษฎีเคมีเป็น <strong>กลไกเกม</strong> เช่น วงจรแพ้ทาง กรดเบส และการจัดทัพตัวละคร</p></div>
+            <div class="ladder-card"><div class="letter">D</div><h4>การพัฒนาระบบเกม</h4><p>สร้างสภาพแวดล้อมจำลอง เขียนโค้ดบนแพลตฟอร์มเพื่อให้การเรียนรู้สอดคล้องกับเจตนา</p></div>
+            <div class="ladder-card"><div class="letter">E</div><h4>สร้างการมีส่วนร่วม</h4><p>ดึงดูดความสนใจด้วยกราฟิก เอฟเฟกต์การต่อสู้ และความท้าทายของการตีบอส</p></div>
+            <div class="ladder-card"><div class="letter">R</div><h4>การเล่นซ้ำและจดจำ</h4><p>ระบบการจัดทีมกระตุ้นให้กลับมา <strong>เล่นซ้ำ</strong> ช่วยฝังความจำและรักษาการเรียนรู้ในระยะยาว</p></div>
+        </div>
+    </div>
+</div>
+
+<div class="slide-container slide-6" id="slide6">
+    <div class="bg-pattern"></div>
+    <div class="bg-blob yellow" style="top: -200px; left: 30%;"></div>
+    <div class="slide-content">
+        <h2 class="slide-title">ลูปการเล่นหลัก 4 ขั้นตอน</h2>
+        
+        <div class="timeline-wrapper-v2" id="timelineGrid">
+            <div class="t-line"></div>
+            
+            <div class="t-node top" onclick="toggleTimelineCard(1)">
+                <div class="t-circle">1</div>
+                <div class="t-text text-fade">
+                    <h4>เตรียมตัว</h4>
+                    <p>วิเคราะห์จุดอ่อนบอส</p>
+                </div>
+                <div class="click-hint-t text-fade"><i class="fa-solid fa-hand-pointer"></i> คลิกเพื่อเจาะลึก</div>
+            </div>
+            
+            <div class="t-node bottom" onclick="toggleTimelineCard(2)">
+                <div class="t-text text-fade">
+                    <h4>ผสมสาร</h4>
+                    <p>สร้างพันธะเคมี</p>
+                </div>
+                <div class="t-circle">2</div>
+                <div class="click-hint-t text-fade"><i class="fa-solid fa-hand-pointer"></i> คลิกเพื่อเจาะลึก</div>
+            </div>
+            
+            <div class="t-node top" onclick="toggleTimelineCard(3)">
+                <div class="t-circle">3</div>
+                <div class="t-text text-fade">
+                    <h4>จัดทัพ</h4>
+                    <p>จัดเรียงบนกระดาน</p>
+                </div>
+                <div class="click-hint-t text-fade"><i class="fa-solid fa-hand-pointer"></i> คลิกเพื่อเจาะลึก</div>
+            </div>
+            
+            <div class="t-node bottom" onclick="toggleTimelineCard(4)">
+                <div class="t-text text-fade">
+                    <h4>ต่อสู้ตัดสิน</h4>
+                    <p>ตัดสินผลแพ้ชนะ</p>
+                </div>
+                <div class="t-circle">4</div>
+                <div class="click-hint-t text-fade"><i class="fa-solid fa-hand-pointer"></i> คลิกเพื่อเจาะลึก</div>
+            </div>
+        </div>
+
+        <div class="timeline-details-container" id="timelineDetails">
+            <div class="detail-view hide-texts" id="detail-phase-1" onclick="closeTimelineDetail()" style="grid-template-columns: 0.65fr 1.35fr; gap: 40px; align-items: stretch; padding: 40px;">
+                <div class="detail-left detail-text" style="display: flex; flex-direction: column; justify-content: center;">
+                    <h3 style="font-size: 42px; color: #e04f33; margin-bottom: 25px;"><span style="background: #e04f33; color: white; padding: 5px 20px; border-radius: 50%; margin-right: 15px;">1</span> เตรียมตัวบริหารเงิน</h3>
+                    <p style="font-size: 20px; line-height: 1.6;">ผู้เล่นจะได้รับเงินเพียง <strong>3 บาท</strong> ต่อตา (โดยมีตัวละครสำเร็จรูปให้บนบอร์ดอยู่แล้ว 1 ตัว) ต้อง <strong>บริหารจัดการเงิน</strong> และเวลาที่มีจำกัด เพื่อซื้อธาตุ ผสมสาร และจัดวางให้ทัน</p>
+                    <button class="close-detail-btn" onclick="event.stopPropagation(); closeTimelineDetail()"><i class="fa-solid fa-rotate-left"></i> ย้อนกลับ</button>
+                </div>
+                <div class="detail-right detail-text" style="height: 100%; width: 100%;">
+                    <div class="img-box premium" style="padding: 0; background: #1a1a1a; overflow: hidden; height: 100%; width: 100%; border-radius: 20px; box-shadow: 0 15px 40px rgba(224, 79, 51, 0.2);">
+                        <video autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover;">
+                            <source src="buy.mp4" type="video/mp4">
+                            <source src="C:\Users\evoto\OneDrive\Desktop\code for programming\something\buy.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-view hide-texts" id="detail-phase-2" onclick="closeTimelineDetail()" style="grid-template-columns: 0.65fr 1.35fr; gap: 40px; align-items: stretch; padding: 40px;">
+                <div class="detail-left detail-text" style="display: flex; flex-direction: column; justify-content: center;">
+                    <h3 style="font-size: 42px; color: #e04f33; margin-bottom: 25px;"><span style="background: #e04f33; color: white; padding: 5px 20px; border-radius: 50%; margin-right: 15px;">2</span> ผสมสารแก้ทาง</h3>
+                    <p style="font-size: 20px; line-height: 1.6;">ผู้เล่นต้องสังเกตคุณสมบัติของมอนสเตอร์ในเวฟต่อไป แล้วลากอะตอมมาสร้างพันธะเคมี เป็นตัวละครสารประกอบที่ <strong>"ชนะทาง"</strong> เพื่อดึงประสิทธิภาพวงจรแพ้ทางเคมีออกมาทำความเสียหายให้ได้สูงสุด</p>
+                    <button class="close-detail-btn" onclick="event.stopPropagation(); closeTimelineDetail()"><i class="fa-solid fa-rotate-left"></i> ย้อนกลับ</button>
+                </div>
+                <div class="detail-right detail-text" style="height: 100%; width: 100%;">
+                    <div class="img-box premium" style="padding: 0; background: #1a1a1a; overflow: hidden; height: 100%; width: 100%; border-radius: 20px; box-shadow: 0 15px 40px rgba(224, 79, 51, 0.2);">
+                        <video autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover;">
+                            <source src="plus.mp4" type="video/mp4">
+                            <source src="C:\Users\evoto\OneDrive\Desktop\code for programming\something\plus.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-view hide-texts" id="detail-phase-3" onclick="closeTimelineDetail()" style="grid-template-columns: 0.65fr 1.35fr; gap: 40px; align-items: stretch; padding: 40px;">
+                <div class="detail-left detail-text" style="display: flex; flex-direction: column; justify-content: center;">
+                    <h3 style="font-size: 42px; color: #e04f33; margin-bottom: 25px;"><span style="background: #e04f33; color: white; padding: 5px 20px; border-radius: 50%; margin-right: 15px;">3</span> จัดวางกลยุทธ์</h3>
+                    <p style="font-size: 20px; line-height: 1.6;">นำตัวละครที่ผสมเสร็จมาจัดวางบนกระดานตารางหมากรุก ตามหลักกลยุทธ์ เช่น วางสาย <strong>โลหะ</strong> ที่อึดและถึกไว้เป็นตัวรับการโจมตีแถวหน้า และจัดวางสาย <strong>กรด และ เบส</strong> ไว้แถวหลังเพื่อทำความเสียหายหรือสนับสนุนทีม</p>
+                    <button class="close-detail-btn" onclick="event.stopPropagation(); closeTimelineDetail()"><i class="fa-solid fa-rotate-left"></i> ย้อนกลับ</button>
+                </div>
+                <div class="detail-right detail-text" style="height: 100%; width: 100%;">
+                    <div class="img-box premium" style="padding: 0; background: #1a1a1a; overflow: hidden; height: 100%; width: 100%; border-radius: 20px; box-shadow: 0 15px 40px rgba(224, 79, 51, 0.2);">
+                        <video autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover;">
+                            <source src="board.mp4" type="video/mp4">
+                            <source src="C:\Users\evoto\OneDrive\Desktop\code for programming\something\board.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-view hide-texts" id="detail-phase-4" onclick="closeTimelineDetail()" style="grid-template-columns: 0.65fr 1.35fr; gap: 40px; align-items: stretch; padding: 40px;">
+                <div class="detail-left detail-text" style="display: flex; flex-direction: column; justify-content: center;">
+                    <h3 style="font-size: 42px; color: #e04f33; margin-bottom: 25px;"><span style="background: #e04f33; color: white; padding: 5px 20px; border-radius: 50%; margin-right: 15px;">4</span> ต่อสู้ตัดสิน</h3>
+                    <p style="font-size: 20px; line-height: 1.6;">เข้าสู่โหมด <strong>ต่อสู้อัตโนมัติ</strong> ตัวละครจะโจมตีอัตโนมัติตามวงจรแพ้ทางและตำแหน่งที่จัดไว้ ฝ่ายใดที่ตัวละครถูกกำจัดจนหมดกระดานก่อนจะเป็นฝ่ายแพ้ ฝั่งที่เหลือรอดจะเป็นผู้ชนะและผ่านด่านต่อไป</p>
+                    <button class="close-detail-btn" onclick="event.stopPropagation(); closeTimelineDetail()"><i class="fa-solid fa-rotate-left"></i> ย้อนกลับ</button>
+                </div>
+                <div class="detail-right detail-text" style="height: 100%; width: 100%;">
+                    <div class="img-box premium" style="padding: 0; background: #1a1a1a; overflow: hidden; height: 100%; width: 100%; border-radius: 20px; box-shadow: 0 15px 40px rgba(224, 79, 51, 0.2);">
+                        <video autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover;">
+                            <source src="battle.mp4" type="video/mp4">
+                            <source src="C:\Users\evoto\OneDrive\Desktop\code for programming\something\battle.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="slide-container" id="slide7">
+    <div class="bg-pattern"></div>
+    <div class="slide-content">
+        <h2 class="slide-title">ระบบพยุงการเรียนรู้</h2>
+        <p style="font-size: 24px; color: #666; margin-bottom: 30px;">จากมีตัวช่วยนำทาง สู่การคิดวิเคราะห์ด้วยตัวเองในระดับเชี่ยวชาญ</p>
+        <div class="grid-2-col" style="grid-template-columns: 1fr 1fr 1fr; gap: 30px; align-items: stretch;">
+            
+            <div class="card formative">
+                <div class="card-icon"><i class="fa-solid fa-hands-holding-child"></i></div>
+                <h3 style="font-size: 26px;">Level 1: ผู้เริ่มต้น</h3>
+                <p style="margin-top: 15px; font-size: 18px;">
+                    <strong>มีตัวช่วยเต็มรูปแบบ:</strong> ตัวเกมจะมีเส้นไกด์ไลน์นำทาง ไฮไลท์สีธาตุที่สามารถผสมกันได้ และแสดงข้อมูลจุดอ่อนของบอสให้เห็นชัดเจน เพื่อให้ผู้เล่นคุ้นเคยกับระบบพื้นฐาน
+                </p>
+            </div>
+            
+            <div class="card summative">
+                <div class="card-icon yellow"><i class="fa-solid fa-person-walking"></i></div>
+                <h3 style="font-size: 26px; color:#f59e0b;">Level 2: ระดับกลาง</h3>
+                <p style="margin-top: 15px; font-size: 18px;">
+                    <strong>ลดคำใบ้ลง:</strong> นำเส้นไกด์ไลน์ออก เหลือเพียงสัญลักษณ์และสีของธาตุ ผู้เล่นจะต้องเริ่มใช้ความจำในการผสมสารประกอบหลักๆ ด้วยตนเอง
+                </p>
+            </div>
+            
+            <div class="card mastery">
+                <div class="card-icon red"><i class="fa-solid fa-person-running"></i></div>
+                <h3 style="font-size: 26px; color:#ef4444;">Level 3: เชี่ยวชาญ</h3>
+                <p style="margin-top: 15px; font-size: 18px;">
+                    <strong>ถอดตัวช่วยออก:</strong> บอสจะเริ่มซ่อนจุดอ่อน ผู้เล่นจะต้องวิเคราะห์และจัดทีมแก้ไขสถานการณ์จากความเข้าใจที่สะสมมาทั้งหมด เพื่อเอาชนะความท้าทาย
+                </p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="slide-container" id="slide8">
+    <div class="bg-pattern"></div>
+    <div class="slide-content" style="position: relative; z-index: 1;">
+        <h2 class="slide-title">วงจรการแพ้ทางเคมี</h2>
+        
+        <div class="problems-overlay" id="triangleOverlay"></div>
+
+        <div class="problems-grid" id="triangleGrid" style="align-items: center; height: 420px;">
+            
+            <div class="problem-card red-border" onclick="toggleTriangleCard(this)" style="height: 380px;">
+                <div class="card-front text-fade" style="justify-content: center;">
+                    <div class="card-icon red" style="width: 80px; height: 80px; font-size: 40px;"><i class="fa-solid fa-droplet"></i></div>
+                    <h3 style="color:#ef4444; font-size: 28px;">สายกรด</h3>
+                    <p style="margin-top: 15px; font-size: 18px;">ทำปฏิกิริยากัดกร่อน มีความสามารถทำความเสียหายทะลุเกราะ <strong>ชนะทางสายโลหะ</strong></p>
+                    <div class="click-hint"><i class="fa-solid fa-expand"></i> คลิกเพื่อดูจุดเด่น</div>
+                </div>
+                <div class="card-details text-fade">
+                    <h3 style="color: #ef4444; font-size: 40px; margin-bottom: 20px;"><i class="fa-solid fa-droplet"></i> คุณสมบัติ: สายกรด</h3>
+                    <p style="font-size: 22px; line-height: 1.8;"><strong>จุดเด่น:</strong> มีสกิลติดตัวทำลายล้าง เมื่อโจมตีใส่ศัตรูสายโลหะ จะสร้างความเสียหายทะลุเกราะป้องกัน ทำให้จัดการกับศัตรูที่มีพลังป้องกันสูงได้อย่างรวดเร็ว</p>
+                    <p style="font-size: 22px; line-height: 1.8;"><strong>ตัวอย่างธาตุ:</strong> ไฮโดรคลอริก, ซัลฟิวริก</p>
+                    <button class="close-detail-btn" onclick="event.stopPropagation(); toggleTriangleCard(this.closest('.problem-card'))">
+                        <i class="fa-solid fa-compress"></i> ย้อนกลับ
+                    </button>
+                </div>
+            </div>
+            
+            <div class="arrow-right text-fade"><i class="fa-solid fa-arrow-right-long"></i><span>ชนะทาง</span></div>
+
+            <div class="problem-card orange-border" onclick="toggleTriangleCard(this)" style="height: 380px;">
+                <div class="card-front text-fade" style="justify-content: center;">
+                    <div class="card-icon orange" style="width: 80px; height: 80px; font-size: 40px;"><i class="fa-solid fa-cubes"></i></div>
+                    <h3 style="color:#f59e0b; font-size: 28px;">สายโลหะ</h3>
+                    <p style="margin-top: 15px; font-size: 18px;">โครงสร้างทนทานและมีพลังโจมตีกายภาพสูง <strong>ชนะทางสายเบส</strong></p>
+                    <div class="click-hint"><i class="fa-solid fa-expand" style="color:#f59e0b;"></i> คลิกเพื่อดูจุดเด่น</div>
+                </div>
+                <div class="card-details text-fade">
+                    <h3 style="color: #f59e0b; font-size: 40px; margin-bottom: 20px;"><i class="fa-solid fa-cubes"></i> คุณสมบัติ: สายโลหะ</h3>
+                    <p style="font-size: 22px; line-height: 1.8;"><strong>จุดเด่น:</strong> พลังชีวิตและเกราะพื้นฐานสูงมาก ทำหน้าที่เป็นตัวรับการโจมตีให้กับทีม เมื่อปะทะกับศัตรูสายเบส จะสามารถต้านทานสถานะผิดปกติและทะลวงแนวป้องกันได้</p>
+                    <p style="font-size: 22px; line-height: 1.8;"><strong>ตัวอย่างธาตุ:</strong> เหล็ก, แมกนีเซียม</p>
+                    <button class="close-detail-btn" style="color: #f59e0b;" onclick="event.stopPropagation(); toggleTriangleCard(this.closest('.problem-card'))">
+                        <i class="fa-solid fa-compress"></i> ย้อนกลับ
+                    </button>
+                </div>
+            </div>
+
+            <div class="arrow-right text-fade"><i class="fa-solid fa-arrow-right-long"></i><span>ชนะทาง</span></div>
+
+            <div class="problem-card blue-border" onclick="toggleTriangleCard(this)" style="height: 380px;">
+                <div class="card-front text-fade" style="justify-content: center;">
+                    <div class="card-icon blue" style="width: 80px; height: 80px; font-size: 40px;"><i class="fa-solid fa-vial"></i></div>
+                    <h3 style="color:#3b82f6; font-size: 28px;">สายเบส</h3>
+                    <p style="margin-top: 15px; font-size: 18px;">ทำปฏิกิริยาสะเทิน เปลี่ยนสภาพให้เป็นกลาง <strong>ชนะทางสายกรด</strong></p>
+                    <div class="click-hint"><i class="fa-solid fa-expand" style="color:#3b82f6;"></i> คลิกเพื่อดูจุดเด่น</div>
+                </div>
+                <div class="card-details text-fade">
+                    <h3 style="color: #3b82f6; font-size: 40px; margin-bottom: 20px;"><i class="fa-solid fa-vial"></i> คุณสมบัติ: สายเบส</h3>
+                    <p style="font-size: 22px; line-height: 1.8;"><strong>จุดเด่น:</strong> มีทักษะการสะเทิน สามารถลบล้างการเพิ่มพลังโจมตีหรือดูดซับความเสียหายจากศัตรูสายกรดให้กลายเป็นศูนย์ได้ ทำให้ทีมยืนหยัดได้นานขึ้น</p>
+                    <p style="font-size: 22px; line-height: 1.8;"><strong>ตัวอย่างธาตุ:</strong> โซเดียมไฮดรอกไซด์, แอมโมเนีย</p>
+                    <button class="close-detail-btn" style="color: #3b82f6;" onclick="event.stopPropagation(); toggleTriangleCard(this.closest('.problem-card'))">
+                        <i class="fa-solid fa-compress"></i> ย้อนกลับ
+                    </button>
+                </div>
+            </div>
+            
+            <div class="return-path text-fade"><i class="fa-solid fa-caret-left return-path-arrow"></i><span class="return-path-text">ชนะทาง</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="slide-container" id="slide9">
+    <div class="bg-pattern"></div>
+    <div class="slide-content">
+        <h2 class="slide-title">การประเมินผลโดยไร้รอยต่อ</h2>
+        <div class="grid-2-col" style="align-items: stretch; gap: 40px;">
+            <div class="card formative"><div class="card-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div><h3 style="font-size: 30px;">ประเมินระหว่างเรียน</h3><p style="margin-top: 15px;">ประเมินความเข้าใจผ่านการผสมสาร หากผสมอะตอมผิดสูตร บล็อกจะเด้งออกและให้ข้อมูลย้อนกลับทันที</p></div>
+            <div class="card summative"><div class="card-icon"><i class="fa-solid fa-trophy"></i></div><h3 style="font-size: 30px; color:#f59e0b;">ประเมินรวบยอด</h3><p style="margin-top: 15px;">ประเมินผลจากการ <strong>จัดทีมและแก้ทาง</strong> หากใช้สารประกอบแก้ทางบอสถูกต้อง พลังชีวิตทีมจะเหลือเยอะ</p></div>
+        </div>
+    </div>
+</div>
+
+<div class="slide-container" id="slide10">
+    <div class="bg-pattern"></div>
+    <div class="bg-blob yellow" style="top: -150px; left: -150px;"></div>
+    <div class="slide-content">
+        <h2 class="slide-title">มาตรการแก้ไขความเข้าใจคลาดเคลื่อน</h2>
+        <p style="font-size: 24px; color: #666; margin-bottom: 30px;">เมื่อผู้เรียนประเมินไม่ผ่าน เกมจะเปลี่ยน "ความล้มเหลว" ให้เป็น "คำใบ้"</p>
+        <div class="grid-2-col" style="grid-template-columns: 1fr 1fr 1fr; gap: 30px; align-items: stretch;">
+            <div class="card formative">
+                <div class="card-icon"><i class="fa-solid fa-rotate-left"></i></div>
+                <h3 style="font-size: 26px;">1. สะท้อนผลทันที</h3>
+                <p style="margin-top: 15px; font-size: 18px;">
+                    หากผสมอะตอมข้ามสายพันธุ์ที่เกิดปฏิกิริยาไม่ได้ โมเลกุลจะ <strong>เด้งออกจากกันทันที</strong> พร้อมเอฟเฟกต์แจ้งเตือน เพื่อแก้ความเข้าใจผิดเรื่องการสร้างพันธะ
+                </p>
+            </div>
+            <div class="card summative">
+                <div class="card-icon yellow"><i class="fa-solid fa-lightbulb"></i></div>
+                <h3 style="font-size: 26px; color:#f59e0b;">2. ระบบคำใบ้อัจฉริยะ</h3>
+                <p style="margin-top: 15px; font-size: 18px;">
+                    เมื่อจัดทีมแพ้บอส หน้าสรุปผลจะไม่โชว์แค่ Game Over แต่จะ <strong>อธิบายสาเหตุความพ่ายแพ้</strong> เช่น "บอสมีเกราะหนา ลองใช้สายกรดเจาะเกราะดูสิ!"
+                </p>
+            </div>
+            <div class="card mastery">
+                <div class="card-icon red"><i class="fa-solid fa-infinity"></i></div>
+                <h3 style="font-size: 26px; color:#ef4444;">3. พื้นที่ทดลองซ้ำ</h3>
+                <p style="margin-top: 15px; font-size: 18px;">
+                    การแพ้ในเกมไม่มีบทลงโทษร้ายแรง ผู้เรียนสามารถปรับสูตรเคมีหรือจัดวางกระดานใหม่ แล้ว <strong>เริ่มท้าทายได้ทันที</strong> เปลี่ยนความกลัวให้เป็นการทดลอง
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="slide-container" id="slide11">
+    <div class="bg-pattern"></div>
+    <div class="bg-blob orange" style="top: auto; bottom: -200px; right: -200px; left: auto;"></div>
+    <div class="slide-content">
+        <h2 class="slide-title">เบื้องหลังการพัฒนาเทคโนโลยี</h2>
+        <div class="grid-2-col" style="grid-template-columns: 1.4fr 0.6fr;">
+            <div class="img-box premium" style="background: #1e1e1e; padding: 15px;">
+                <img src="lua.png" onerror="this.src='C:\\Users\\evoto\\OneDrive\\Desktop\\code for programming\\something\\lua.png'" alt="Roblox Lua Code" style="object-fit: contain; object-position: left center; border-radius: 10px; box-shadow: none;">
+            </div>
+            <div>
+                <h3 style="font-size: 36px; margin-bottom: 25px;">แพลตฟอร์มและสคริปต์</h3>
+                <p>ตัวเกมถูกพัฒนาขึ้นบนแพลตฟอร์มที่นักเรียนระดับมัธยมส่วนใหญ่คุ้นเคยและสามารถเข้าถึงได้ง่ายจากทุกอุปกรณ์ ไม่ต้องติดตั้งโปรแกรมซับซ้อน</p>
+                <p>ระบบทั้งหมดถูกควบคุมโดยสคริปต์ เพื่อจัดการระบบสุ่มไอเทมร้านค้า ตรรกะการเกิดพันธะเคมี และการประมวลผลการต่อสู้ตามหลักปฏิกิริยาเคมีจริง</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="slide-container" id="slide12">
+    <div class="bg-pattern"></div>
+    <div class="bg-blob orange" style="top: -150px; right: -150px;"></div>
+    <div class="bg-blob yellow" style="bottom: -200px; left: -200px;"></div>
+    
+    <div class="slide-content">
+        <h2 class="slide-title">กลุ่มเป้าหมายและผลกระทบ</h2>
+        <div class="grid-2-col" style="align-items: stretch; gap: 40px;">
+            <div class="card formative">
+                <i class="fa-solid fa-bullseye watermark-icon" style="color: #fff3ee;"></i>
+                <div style="position: relative; z-index: 1;">
+                    <div class="card-icon"><i class="fa-solid fa-users"></i></div>
+                    <h3 style="font-size: 28px;">กลุ่มเป้าหมาย</h3>
+                    <ul class="clean-list" style="margin-top: 15px;">
+                        <li><i class="fa-solid fa-user-graduate"></i><div class="text-content"><strong>นักเรียน</strong><span>กลุ่มผู้เรียนที่ต้องเผชิญกับเนื้อหาเคมีอย่างเข้มข้น และต้องการพื้นที่ฝึกฝนเพิ่มเติม</span></div></li>
+                        <li><i class="fa-solid fa-chalkboard-user"></i><div class="text-content"><strong>คุณครู</strong><span>ผู้สอนที่ต้องการนำสื่อการสอนรูปแบบเกมไปใช้ประกอบในห้องเรียน</span></div></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card summative">
+                <i class="fa-solid fa-earth-americas watermark-icon" style="color: #fffbeb;"></i>
+                <div style="position: relative; z-index: 1;">
+                    <div class="card-icon"><i class="fa-solid fa-rocket"></i></div>
+                    <h3 style="font-size: 28px; color:#f59e0b;">ผลลัพธ์ที่คาดหวัง</h3>
+                    <ul class="clean-list" style="margin-top: 15px;">
+                        <li><i class="fa-solid fa-face-smile-beam"></i><div class="text-content"><strong style="color: #f59e0b;">ลดความกดดัน</strong><span>เปลี่ยนการท่องจำที่น่าเบื่อให้เป็นความสนุกผ่านระบบการเล่น</span></div></li>
+                        <li><i class="fa-solid fa-shield-halved"></i><div class="text-content"><strong style="color: #f59e0b;">พื้นที่ปลอดภัย 100%</strong><span>ทดลองได้เต็มที่โดยไม่ต้องกลัวอันตรายหรืออุปกรณ์เสียหาย</span></div></li>
+                        <li><i class="fa-solid fa-mobile-screen"></i><div class="text-content"><strong style="color: #f59e0b;">เข้าถึงง่าย</strong><span>เล่นได้ทุกที่ทุกเวลา ผ่านแพลตฟอร์มเกมที่เด็กคุ้นเคย</span></div></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="slide-container" id="slide13">
+    <div class="bg-pattern"></div>
+    <div class="bg-blob orange"></div>
+    <div class="bg-blob yellow"></div>
+    <div class="slide-content center-layout">
+        <div class="card" style="padding: 80px 120px; text-align: center;">
+            <h2 style="font-size: 60px; margin-bottom: 20px;">"Thanks for attention!"</h2>
+            <p style="font-size: 28px;">ขอบคุณคณะกรรมการทุกท่าน ยินดีรับฟังคำถามและข้อเสนอแนะครับ</p>
+            <div style="margin-top: 40px; padding: 15px 40px; background: #fff3ee; color: #e04f33; border-radius: 50px; font-weight: 600; display: inline-block; font-size: 22px;">
+                <i class="fa-solid fa-users" style="margin-right: 10px;"></i> เตชินท์ กลิ่นศิริมงคล & ใจเพชร จิตรแสวง | Ultimate Chem Battle
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let isAnimating = false; 
+    const bangmodLogo = document.getElementById('bangmodLogo');
+    const masterOverlay = document.getElementById('masterOverlay'); 
+
+    // --- SCRIPT 1: MAGIC MOVE (Slide 2 -> Slide 3) ---
+    function magicMove2to3() {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        const s2Items = document.querySelectorAll('#slide2 .clean-list li');
+        const s3Cards = document.querySelectorAll('#slide3 .problem-card');
+        const s2Texts = document.querySelectorAll('#slide2 .clean-list .text-content, #slide2 .clean-list i');
+        const s3Title = document.querySelector('#slide3 .slide-title');
+        const s2Img = document.getElementById('s2-img');
+        const s2Container = document.getElementById('slide2');
+        const s3Container = document.getElementById('slide3');
+        
+        s2Texts.forEach(el => { el.style.transition = 'opacity 0.5s ease'; el.style.opacity = '0'; });
+        if(s2Img) { s2Img.style.transition = 'opacity 0.5s ease'; s2Img.style.opacity = '0'; }
+        
+        setTimeout(() => {
+            s3Container.style.transition = 'none';
+            s3Container.style.opacity = '1';
+            s3Container.style.transform = 'translate(-50%, -50%) scale(1)';
+            s3Container.style.zIndex = '100'; 
+            
+            s3Cards.forEach(card => card.classList.add('hide-texts'));
+            s3Title.style.opacity = '0'; 
+            
+            s2Items.forEach(el => el.style.opacity = '0');
+            
+            s3Cards.forEach((card, i) => {
+                const rect2 = s2Items[i].getBoundingClientRect();
+                const rect3 = card.getBoundingClientRect();
+                
+                const dx = rect2.left - rect3.left;
+                const dy = rect2.top - rect3.top;
+                const sw = rect2.width / rect3.width;
+                const sh = rect2.height / rect3.height;
+                
+                card.style.transition = 'none';
+                card.style.transformOrigin = 'top left';
+                card.style.transform = `translate(${dx}px, ${dy}px) scale(${sw}, ${sh})`;
+                card.style.borderRadius = '16px';
+                card.style.borderTopWidth = '1px';
+            });
+            
+            void s3Container.offsetWidth; 
+            
+            s3Cards.forEach(card => {
+                card.style.transition = 'all 1.8s cubic-bezier(0.22, 1, 0.36, 1)';
+                card.style.transform = 'translate(0, 0) scale(1)';
+                card.style.borderRadius = '20px';
+                card.style.borderTopWidth = '8px';
+            });
+            
+            s3Title.style.transition = 'opacity 1.8s ease';
+            s3Title.style.opacity = '1';
+            
+            setTimeout(() => {
+                s3Cards.forEach(card => { card.classList.remove('hide-texts'); card.style.cssText = ''; });
+                currentSlide = 2; updateSlides(); 
+                setTimeout(() => {
+                    s2Texts.forEach(el => el.style.opacity = '1');
+                    s2Items.forEach(el => el.style.opacity = '1');
+                    if(s2Img) s2Img.style.opacity = '1';
+                }, 500);
+                isAnimating = false;
+            }, 1800);
+        }, 500);
+    }
+
+    // --- SCRIPT 1.5: MAGIC MOVE (Slide 3 -> Slide 4) ---
+    function magicMove3to4() {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        const s3Cards = document.querySelectorAll('#slide3 .problem-card');
+        const s3CardTarget = s3Cards[2]; 
+        const s4ImgBox = document.querySelector('#slide4 .img-box');
+        const s4Texts = document.querySelector('#slide4 .grid-2-col > div:first-child');
+        const s4Title = document.querySelector('#slide4 .slide-title');
+        const s3Container = document.getElementById('slide3');
+        const s4Container = document.getElementById('slide4');
+        const s4ImgContent = s4ImgBox.querySelector('img');
+
+        const s3OtherCards = [s3Cards[0], s3Cards[1]];
+        const s3Title = document.querySelector('#slide3 .slide-title');
+
+        s3OtherCards.forEach(c => { c.style.transition = 'opacity 0.4s ease'; c.style.opacity = '0'; });
+        s3Title.style.transition = 'opacity 0.4s ease'; s3Title.style.opacity = '0';
+
+        const s3CardContent = Array.from(s3CardTarget.children);
+        s3CardContent.forEach(el => { el.style.transition = 'opacity 0.3s ease'; el.style.opacity = '0'; });
+
+        s4Texts.style.transition = 'none'; s4Texts.style.opacity = '0';
+        s4Title.style.transition = 'none'; s4Title.style.opacity = '0';
+        if(s4ImgContent) { s4ImgContent.style.transition = 'none'; s4ImgContent.style.opacity = '0'; }
+
+        setTimeout(() => {
+            s4Container.style.transition = 'none';
+            s4Container.style.opacity = '1';
+            s4Container.style.transform = 'translate(-50%, -50%) scale(1)';
+            s4Container.style.zIndex = '100';
+
+            const rect3 = s3CardTarget.getBoundingClientRect();
+            const rect4 = s4ImgBox.getBoundingClientRect();
+
+            const dx = rect3.left - rect4.left;
+            const dy = rect3.top - rect4.top;
+            const sw = rect3.width / rect4.width;
+            const sh = rect3.height / rect4.height;
+
+            s4ImgBox.style.transition = 'none';
+            s4ImgBox.style.transformOrigin = 'top left';
+            s4ImgBox.style.transform = `translate(${dx}px, ${dy}px) scale(${sw}, ${sh})`;
+            s4ImgBox.style.borderRadius = '20px';
+            s4ImgBox.style.background = '#ffffff';
+            s4ImgBox.style.border = '1px solid #f0f0f0';
+            s4ImgBox.style.borderTop = '8px solid #eab308'; 
+            s4ImgBox.style.boxShadow = '0 10px 30px rgba(0,0,0,0.04)';
+
+            s3CardTarget.style.opacity = '0'; 
+
+            void s4Container.offsetWidth; 
+
+            s4ImgBox.style.transition = 'all 1.2s cubic-bezier(0.22, 1, 0.36, 1)';
+            s4ImgBox.style.transform = 'translate(0, 0) scale(1)';
+            s4ImgBox.style.borderRadius = '24px';
+            s4ImgBox.style.background = 'linear-gradient(135deg, #fff5f0 0%, #ffe3d1 100%)';
+            s4ImgBox.style.border = 'none';
+            s4ImgBox.style.borderTop = 'none';
+            s4ImgBox.style.boxShadow = 'inset 0 0 30px rgba(255,255,255,0.6), 0 15px 30px rgba(224, 79, 51, 0.1)';
+
+            s4Texts.style.transition = 'opacity 1s ease 0.4s';
+            s4Texts.style.opacity = '1';
+            s4Title.style.transition = 'opacity 1s ease 0.4s';
+            s4Title.style.opacity = '1';
+
+            if(s4ImgContent) {
+                s4ImgContent.style.transition = 'opacity 1s ease 0.4s';
+                s4ImgContent.style.opacity = '1';
+            }
+
+            setTimeout(() => {
+                s4ImgBox.style.cssText = ''; 
+                s4Texts.style.cssText = '';
+                s4Title.style.cssText = '';
+                if(s4ImgContent) s4ImgContent.style.cssText = '';
+                
+                s3OtherCards.forEach(c => c.style.cssText = '');
+                s3Title.style.cssText = '';
+                s3CardTarget.style.cssText = '';
+                s3CardContent.forEach(el => el.style.cssText = '');
+
+                currentSlide = 3; 
+                updateSlides();
+                isAnimating = false;
+            }, 1500);
+
+        }, 400);
+    }
+
+    // --- SCRIPT 1.7: MAGIC MOVE (Slide 4 -> Slide 5) ---
+    function magicMove4to5() {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        const s4ImgBox = document.querySelector('#slide4 .img-box');
+        const s4Texts = document.querySelector('#slide4 .grid-2-col > div:first-child');
+        const s4Title = document.querySelector('#slide4 .slide-title');
+
+        const s5Cards = document.querySelectorAll('#slide5 .ladder-card');
+        const s5Card1 = s5Cards[0];
+        const s5OtherCards = Array.from(s5Cards).slice(1);
+        const s5Title = document.querySelector('#slide5 .slide-title');
+        
+        const s4Container = document.getElementById('slide4');
+        const s5Container = document.getElementById('slide5');
+
+        s4Texts.style.transition = 'opacity 0.4s ease'; s4Texts.style.opacity = '0';
+        s4Title.style.transition = 'opacity 0.4s ease'; s4Title.style.opacity = '0';
+        
+        const s4Img = s4ImgBox.querySelector('img');
+        if(s4Img) { s4Img.style.transition = 'opacity 0.4s ease'; s4Img.style.opacity = '0'; }
+
+        s5OtherCards.forEach(c => { c.style.transition = 'none'; c.style.opacity = '0'; });
+        s5Title.style.transition = 'none'; s5Title.style.opacity = '0';
+        
+        const s5Card1Content = Array.from(s5Card1.children);
+        s5Card1Content.forEach(el => { el.style.transition = 'none'; el.style.opacity = '0'; });
+
+        setTimeout(() => {
+            s5Container.style.transition = 'none';
+            s5Container.style.opacity = '1';
+            s5Container.style.transform = 'translate(-50%, -50%) scale(1)';
+            s5Container.style.zIndex = '100';
+
+            const rect4 = s4ImgBox.getBoundingClientRect();
+            const rect5 = s5Card1.getBoundingClientRect();
+
+            const dx = rect4.left - rect5.left;
+            const dy = rect4.top - rect5.top;
+            const sw = rect4.width / rect5.width;
+            const sh = rect4.height / rect5.height;
+
+            s5Card1.style.transition = 'none';
+            s5Card1.style.transformOrigin = 'top left';
+            s5Card1.style.transform = `translate(${dx}px, ${dy}px) scale(${sw}, ${sh})`;
+            s5Card1.style.borderRadius = '24px';
+            s5Card1.style.background = 'linear-gradient(135deg, #fff5f0 0%, #ffe3d1 100%)';
+            s5Card1.style.borderTop = 'none';
+            s5Card1.style.boxShadow = 'inset 0 0 30px rgba(255,255,255,0.6), 0 15px 30px rgba(224, 79, 51, 0.1)';
+
+            s4ImgBox.style.opacity = '0';
+
+            void s5Container.offsetWidth; 
+
+            s5Card1.style.transition = 'all 1.2s cubic-bezier(0.22, 1, 0.36, 1)';
+            s5Card1.style.transform = 'translate(0, 0) scale(1)';
+            s5Card1.style.borderRadius = '16px';
+            s5Card1.style.background = '#ffffff';
+            s5Card1.style.borderTop = '5px solid #e04f33';
+            s5Card1.style.boxShadow = '0 8px 20px rgba(0,0,0,0.03)';
+
+            s5Title.style.transition = 'opacity 1s ease 0.4s';
+            s5Title.style.opacity = '1';
+            
+            s5OtherCards.forEach((c, index) => {
+                c.style.transition = `opacity 0.8s ease ${0.5 + (index * 0.1)}s`;
+                c.style.opacity = '1';
+            });
+
+            s5Card1Content.forEach(el => {
+                el.style.transition = 'opacity 0.8s ease 0.4s';
+                el.style.opacity = '1';
+            });
+
+            setTimeout(() => {
+                s5Card1.style.cssText = '';
+                s5Card1Content.forEach(el => el.style.cssText = '');
+                s5OtherCards.forEach(c => c.style.cssText = '');
+                s5Title.style.cssText = '';
+                
+                s4ImgBox.style.opacity = '1'; 
+                if(s4Img) s4Img.style.opacity = '1';
+                s4Texts.style.cssText = '';
+                s4Title.style.cssText = '';
+
+                currentSlide = 4;
+                updateSlides();
+                isAnimating = false;
+            }, 1500);
+
+        }, 400); 
+    }
+
+    // --- SCRIPT 1.8: MAGIC MOVE (Slide 5 -> Slide 6) ---
+    function magicMove5to6() {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        const s5Cards = document.querySelectorAll('#slide5 .ladder-card');
+        const s5Title = document.querySelector('#slide5 .slide-title');
+        
+        const s6Container = document.getElementById('slide6');
+        const s6Title = document.querySelector('#slide6 .slide-title');
+        const s6Line = document.querySelector('#slide6 .t-line');
+        const s6Nodes = document.querySelectorAll('#slide6 .t-node');
+
+        const s5Container = document.getElementById('slide5');
+
+        // 1. เฟดข้อความในการ์ดหน้า 5 ออกไปก่อน
+        s5Title.style.transition = 'opacity 0.4s ease';
+        s5Title.style.opacity = '0';
+        
+        s5Cards.forEach(card => {
+            const content = Array.from(card.children);
+            content.forEach(el => { el.style.transition = 'opacity 0.3s ease'; el.style.opacity = '0'; });
+        });
+
+        // 2. เตรียมหน้า 6 ให้ซ่อนไว้ และเอาโหนดไปแอบในเส้นกลาง
+        if(s6Title) { s6Title.style.transition = 'none'; s6Title.style.opacity = '0'; }
+        s6Line.style.transition = 'none'; s6Line.style.opacity = '0'; 
+        
+        s6Nodes.forEach(node => { 
+            node.style.transition = 'none'; 
+            node.style.opacity = '0'; 
+            const isTop = node.classList.contains('top');
+            // ย้ายโหนดให้มาซ่อนที่จุดศูนย์กลางเส้น Timeline
+            node.style.transform = `translateY(${isTop ? '60px' : '-60px'}) scale(0.5)`; 
+        });
+
+        setTimeout(() => {
+            // 3. แอนิเมชันให้กล่อง LADDER ทั้ง 6 บีบตัวกลายเป็นเส้น Timeline
+            const targetY = window.innerHeight / 2;
+
+            s5Cards.forEach((card, i) => {
+                const rect = card.getBoundingClientRect();
+                
+                // สร้างกล่องล่องหนกันไม่ให้ Layout พัง
+                const placeholder = document.createElement('div');
+                placeholder.id = 'placeholder-5-' + i;
+                placeholder.style.width = rect.width + 'px';
+                placeholder.style.height = rect.height + 'px';
+                card.parentNode.insertBefore(placeholder, card);
+
+                card.style.position = 'fixed';
+                card.style.top = rect.top + 'px';
+                card.style.left = rect.left + 'px';
+                card.style.width = rect.width + 'px';
+                card.style.height = rect.height + 'px';
+                card.style.zIndex = '101';
+                card.style.margin = '0';
+                
+                void card.offsetWidth; // บังคับให้เบราว์เซอร์รีเฟรช
+
+                // หุบกล่องให้แบนลงกลายเป็นเส้น (ปรับความสูงเป็น 2px ตามคำขอ)
+                card.style.transition = 'all 0.8s cubic-bezier(0.25, 1, 0.5, 1)';
+                card.style.top = (targetY - 1) + 'px'; // ปรับตำแหน่งให้ตรงกลางเป๊ะ (2px / 2 = 1)
+                card.style.height = '2px';
+                card.style.background = '#ffccbc'; // สีเดียวกับเส้น Timeline
+                card.style.border = 'none';
+                card.style.boxShadow = 'none';
+                card.style.borderRadius = '10px';
+                
+                if(i === 0) {
+                    // ให้กล่องซ้ายบนสุด ยืดออกเป็นเส้นยาวเต็มหน้าจอ
+                    card.style.left = '8vw';
+                    card.style.width = '84vw'; 
+                } else {
+                    // กล่องอื่นๆ ยุบตัวแล้วหายไป
+                    card.style.opacity = '0';
+                    card.style.width = '0px';
+                }
+            });
+
+            setTimeout(() => {
+                // 4. สลับโชว์หน้า 6 แทนที่
+                s6Container.style.transition = 'none';
+                s6Container.style.opacity = '1';
+                s6Container.style.transform = 'translate(-50%, -50%) scale(1)';
+                s6Container.style.zIndex = '100';
+
+                s6Line.style.opacity = '1'; // แสดงเส้น Timeline จริง
+                s5Cards[0].style.opacity = '0'; // ซ่อนเส้นจำลอง
+
+                void s6Container.offsetWidth;
+
+                // 5. เด้งโหนด Timeline ออกมาจากเส้นตรงกลาง (เหมือน Spring)
+                if(s6Title) {
+                    s6Title.style.transition = 'opacity 0.8s ease';
+                    s6Title.style.opacity = '1';
+                }
+
+                s6Nodes.forEach((node, idx) => {
+                    // หน่วงเวลาให้โหนดเด้งขึ้นมาทีละอัน
+                    node.style.transition = `all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) ${idx * 0.15}s`;
+                    node.style.opacity = '1';
+                    node.style.transform = 'translateY(0) scale(1)';
+                });
+
+                setTimeout(() => {
+                    // คืนค่า CSS ให้หน้า 5 เผื่อมีการกดย้อนกลับ
+                    s5Title.style.cssText = '';
+                    s5Cards.forEach((card, i) => {
+                        card.style.cssText = '';
+                        const content = Array.from(card.children);
+                        content.forEach(el => el.style.cssText = '');
+                        const ph = document.getElementById('placeholder-5-' + i);
+                        if(ph) ph.remove();
+                    });
+                    
+                    if(s6Title) s6Title.style.cssText = '';
+                    s6Line.style.cssText = '';
+                    s6Nodes.forEach(node => node.style.cssText = '');
+
+                    currentSlide = 5; // เปลี่ยน index เป็นหน้า 6 (index 5)
+                    updateSlides();
+                    isAnimating = false;
+                }, 1200);
+
+            }, 800);
+
+        }, 400);
+    }
+    function magicMove6to7() {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        const s6Nodes = document.querySelectorAll('#slide6 .t-node');
+        const s6Line = document.querySelector('#slide6 .t-line');
+        const s6Title = document.querySelector('#slide6 .slide-title');
+        
+        const s7Cards = document.querySelectorAll('#slide7 .card');
+        const s7Title = document.querySelector('#slide7 .slide-title');
+        const s7SubTitle = document.querySelector('#slide7 p');
+
+        const s6Container = document.getElementById('slide6');
+        const s7Container = document.getElementById('slide7');
+
+        // 1. เฟดโหนดวงกลมและข้อความหน้า 6 ออกไปให้เหลือแต่เส้น
+        if(s6Title) { s6Title.style.transition = 'opacity 0.4s ease'; s6Title.style.opacity = '0'; }
+        s6Nodes.forEach(node => {
+            node.style.transition = 'all 0.4s ease';
+            node.style.opacity = '0';
+            node.style.transform = 'scale(0.5)'; // หดตัวเล็กลงแล้วหายไป
+        });
+
+        // 2. เตรียมหน้า 7 (ซ่อนข้อความไว้ก่อน)
+        if(s7Title) { s7Title.style.transition = 'none'; s7Title.style.opacity = '0'; }
+        if(s7SubTitle) { s7SubTitle.style.transition = 'none'; s7SubTitle.style.opacity = '0'; }
+        s7Cards.forEach(card => {
+            const content = Array.from(card.children);
+            content.forEach(el => { el.style.transition = 'none'; el.style.opacity = '0'; });
+        });
+
+        setTimeout(() => {
+            s7Container.style.transition = 'none';
+            s7Container.style.opacity = '1';
+            s7Container.style.transform = 'translate(-50%, -50%) scale(1)';
+            s7Container.style.zIndex = '100';
+
+            const lineRect = s6Line.getBoundingClientRect();
+
+            // 3. จำแลงการ์ดหน้า 7 ให้แบนเป็นเส้น ทับตำแหน่งของเส้นหน้า 6
+            s7Cards.forEach((card, i) => {
+                const rect = card.getBoundingClientRect();
+                
+                const placeholder = document.createElement('div');
+                placeholder.id = 'placeholder-7-' + i;
+                placeholder.style.width = rect.width + 'px';
+                placeholder.style.height = rect.height + 'px';
+                card.parentNode.insertBefore(placeholder, card);
+
+                card.style.position = 'fixed';
+                
+                // แบ่งความยาวเส้นออกเป็น 3 ท่อน
+                const segmentWidth = lineRect.width / 3;
+                const startLeft = lineRect.left + (segmentWidth * i) + 15; 
+                
+                card.style.left = startLeft + 'px';
+                card.style.top = lineRect.top + 'px';
+                card.style.width = (segmentWidth - 30) + 'px';
+                card.style.height = '6px';
+                card.style.background = '#ffccbc';
+                card.style.border = 'none';
+                card.style.borderRadius = '10px';
+                card.style.boxShadow = 'none';
+                card.style.zIndex = '101';
+                card.style.margin = '0';
+            });
+
+            s6Line.style.opacity = '0'; // ซ่อนเส้นจริงหน้า 6
+
+            void s7Container.offsetWidth; // บังคับเรนเดอร์
+
+            // 4. แอนิเมชันให้เส้น 3 ท่อน พองตัวกลับมาเป็นการ์ด
+            s7Cards.forEach((card, i) => {
+                const rect = document.getElementById('placeholder-7-' + i).getBoundingClientRect();
+                card.style.transition = 'all 1s cubic-bezier(0.22, 1, 0.36, 1)';
+                card.style.top = rect.top + 'px';
+                card.style.left = rect.left + 'px';
+                card.style.width = rect.width + 'px';
+                card.style.height = rect.height + 'px';
+                card.style.background = '#ffffff';
+                card.style.borderRadius = '20px';
+                card.style.boxShadow = '0 10px 30px rgba(0,0,0,0.04)';
+                
+                // คืนค่าสีกรอบด้านบน
+                if (card.classList.contains('formative')) card.style.borderTop = '6px solid #e04f33';
+                if (card.classList.contains('summative')) card.style.borderTop = '6px solid #f59e0b';
+                if (card.classList.contains('mastery')) card.style.borderTop = '6px solid #ef4444';
+            });
+
+            // เฟดข้อความขึ้นมา
+            if(s7Title) {
+                s7Title.style.transition = 'opacity 0.8s ease 0.4s';
+                s7Title.style.opacity = '1';
+            }
+            if(s7SubTitle) {
+                s7SubTitle.style.transition = 'opacity 0.8s ease 0.5s';
+                s7SubTitle.style.opacity = '1';
+            }
+
+            s7Cards.forEach(card => {
+                const content = Array.from(card.children);
+                content.forEach(el => {
+                    el.style.transition = 'opacity 0.8s ease 0.6s';
+                    el.style.opacity = '1';
+                });
+            });
+
+            setTimeout(() => {
+                // คืนค่า CSS ให้กลับเป็นปกติ
+                s7Cards.forEach((card, i) => {
+                    card.style.cssText = '';
+                    const content = Array.from(card.children);
+                    content.forEach(el => el.style.cssText = '');
+                    const ph = document.getElementById('placeholder-7-' + i);
+                    if(ph) ph.remove();
+                });
+                
+                if(s7Title) s7Title.style.cssText = '';
+                if(s7SubTitle) s7SubTitle.style.cssText = '';
+                
+                if(s6Title) s6Title.style.cssText = '';
+                s6Line.style.cssText = '';
+                s6Nodes.forEach(node => node.style.cssText = '');
+
+                currentSlide = 6; 
+                updateSlides();
+                isAnimating = false;
+            }, 1600);
+
+        }, 500);
+    }
+
+    // --- SCRIPT 1.9: MAGIC MOVE (Slide 7 -> Slide 8) ---
+    function magicMove7to8() {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        const s7Cards = document.querySelectorAll('#slide7 .card');
+        const s8Cards = document.querySelectorAll('#slide8 .problem-card');
+        const s7Texts = document.querySelectorAll('#slide7 .slide-title, #slide7 p');
+        const s8Title = document.querySelector('#slide8 .slide-title');
+        const s8Arrows = document.querySelectorAll('#slide8 .arrow-right, #slide8 .return-path');
+        const s7Container = document.getElementById('slide7');
+        const s8Container = document.getElementById('slide8');
+
+        s7Texts.forEach(el => { el.style.transition = 'opacity 0.4s ease'; el.style.opacity = '0'; });
+
+        setTimeout(() => {
+            s8Container.style.transition = 'none';
+            s8Container.style.opacity = '1';
+            s8Container.style.transform = 'translate(-50%, -50%) scale(1)';
+            s8Container.style.zIndex = '100'; 
+            
+            s8Cards.forEach(card => card.classList.add('hide-texts'));
+            if(s8Title) s8Title.style.opacity = '0'; 
+            s8Arrows.forEach(arr => arr.style.opacity = '0');
+            
+            s7Cards.forEach(el => el.style.opacity = '0');
+            
+            s8Cards.forEach((card, i) => {
+                if(!s7Cards[i]) return;
+                const rect7 = s7Cards[i].getBoundingClientRect();
+                const rect8 = card.getBoundingClientRect();
+                
+                const dx = rect7.left - rect8.left;
+                const dy = rect7.top - rect8.top;
+                const sw = rect7.width / rect8.width;
+                const sh = rect7.height / rect8.height;
+                
+                card.style.transition = 'none';
+                card.style.transformOrigin = 'top left';
+                card.style.transform = `translate(${dx}px, ${dy}px) scale(${sw}, ${sh})`;
+                card.style.borderRadius = '20px';
+            });
+            
+            void s8Container.offsetWidth; 
+            
+            s8Cards.forEach(card => {
+                card.style.transition = 'all 1.2s cubic-bezier(0.22, 1, 0.36, 1)';
+                card.style.transform = 'translate(0, 0) scale(1)';
+            });
+            
+            if(s8Title) {
+                s8Title.style.transition = 'opacity 1s ease 0.4s';
+                s8Title.style.opacity = '1';
+            }
+            s8Arrows.forEach(arr => {
+                arr.style.transition = 'opacity 1s ease 0.6s';
+                arr.style.opacity = '1';
+            });
+            
+            setTimeout(() => {
+                s8Cards.forEach(card => { card.classList.remove('hide-texts'); card.style.cssText = ''; });
+                s8Arrows.forEach(arr => arr.style.cssText = '');
+                if(s8Title) s8Title.style.cssText = '';
+                
+                currentSlide = 7; 
+                updateSlides(); 
+                
+                setTimeout(() => {
+                    s7Texts.forEach(el => el.style.opacity = '1');
+                    s7Cards.forEach(el => el.style.opacity = '1');
+                }, 500);
+                
+                isAnimating = false;
+            }, 1500);
+
+        }, 400);
+    }
+
+    // --- SCRIPT 1.95: MAGIC MOVE (Slide 8 -> Slide 9) ---
+    function magicMove8to9() {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        const s8Cards = document.querySelectorAll('#slide8 .problem-card');
+        const s8Card0 = s8Cards[0]; 
+        const s8Card1 = s8Cards[1]; 
+        const s8Card2 = s8Cards[2]; 
+
+        const s9Cards = document.querySelectorAll('#slide9 .card');
+        const s9Card0 = s9Cards[0];
+        const s9Card1 = s9Cards[1];
+
+        const s8OtherEls = document.querySelectorAll('#slide8 .slide-title, #slide8 .arrow-right, #slide8 .return-path');
+        const s9Title = document.querySelector('#slide9 .slide-title');
+        
+        const s8Container = document.getElementById('slide8');
+        const s9Container = document.getElementById('slide9');
+
+        s8OtherEls.forEach(el => { el.style.transition = 'opacity 0.4s ease'; el.style.opacity = '0'; });
+        s8Card1.style.transition = 'opacity 0.4s ease'; s8Card1.style.opacity = '0';
+        
+        s8Card0.classList.add('hide-texts');
+        s8Card2.classList.add('hide-texts');
+
+        if(s9Title) { s9Title.style.transition = 'none'; s9Title.style.opacity = '0'; }
+        
+        const s9Card0Content = Array.from(s9Card0.children);
+        const s9Card1Content = Array.from(s9Card1.children);
+        [...s9Card0Content, ...s9Card1Content].forEach(el => { el.style.transition = 'none'; el.style.opacity = '0'; });
+
+        setTimeout(() => {
+            s9Container.style.transition = 'none';
+            s9Container.style.opacity = '1';
+            s9Container.style.transform = 'translate(-50%, -50%) scale(1)';
+            s9Container.style.zIndex = '100';
+
+            const rect8_0 = s8Card0.getBoundingClientRect();
+            const rect9_0 = s9Card0.getBoundingClientRect();
+            const rect8_2 = s8Card2.getBoundingClientRect();
+            const rect9_1 = s9Card1.getBoundingClientRect();
+
+            s9Card0.style.transition = 'none';
+            s9Card0.style.transformOrigin = 'top left';
+            s9Card0.style.transform = `translate(${rect8_0.left - rect9_0.left}px, ${rect8_0.top - rect9_0.top}px) scale(${rect8_0.width / rect9_0.width}, ${rect8_0.height / rect9_0.height})`;
+            s9Card0.style.borderRadius = '20px';
+
+            s9Card1.style.transition = 'none';
+            s9Card1.style.transformOrigin = 'top left';
+            s9Card1.style.transform = `translate(${rect8_2.left - rect9_1.left}px, ${rect8_2.top - rect9_1.top}px) scale(${rect8_2.width / rect9_1.width}, ${rect8_2.height / rect9_1.height})`;
+            s9Card1.style.borderRadius = '20px';
+
+            s8Card0.style.opacity = '0';
+            s8Card2.style.opacity = '0';
+
+            void s9Container.offsetWidth; 
+
+            s9Card0.style.transition = 'all 1.2s cubic-bezier(0.22, 1, 0.36, 1)';
+            s9Card0.style.transform = 'translate(0, 0) scale(1)';
+            s9Card1.style.transition = 'all 1.2s cubic-bezier(0.22, 1, 0.36, 1)';
+            s9Card1.style.transform = 'translate(0, 0) scale(1)';
+
+            if(s9Title) {
+                s9Title.style.transition = 'opacity 1s ease 0.4s';
+                s9Title.style.opacity = '1';
+            }
+
+            [...s9Card0Content, ...s9Card1Content].forEach(el => {
+                el.style.transition = 'opacity 0.8s ease 0.4s';
+                el.style.opacity = '1';
+            });
+
+            setTimeout(() => {
+                s9Card0.style.cssText = '';
+                s9Card1.style.cssText = '';
+                [...s9Card0Content, ...s9Card1Content].forEach(el => el.style.cssText = '');
+                if(s9Title) s9Title.style.cssText = '';
+
+                s8OtherEls.forEach(el => el.style.cssText = '');
+                s8Card0.style.cssText = '';
+                s8Card1.style.cssText = '';
+                s8Card2.style.cssText = '';
+                s8Card0.classList.remove('hide-texts');
+                s8Card2.classList.remove('hide-texts');
+
+                currentSlide = 8; 
+                updateSlides();
+                isAnimating = false;
+            }, 1500);
+
+        }, 400);
+    }
+
+    // --- SCRIPT 1.96: MAGIC MOVE (Slide 9 -> Slide 10) ---
+    function magicMove9to10() {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        const s9Cards = document.querySelectorAll('#slide9 .card');
+        const s9Card0 = s9Cards[0];
+        const s9Card1 = s9Cards[1];
+
+        const s10Cards = document.querySelectorAll('#slide10 .card');
+        const s10Card0 = s10Cards[0]; // บล็อคแรก
+        const s10Card1 = s10Cards[1]; // บล็อคกลาง (สีเหลือง)
+        const s10Card2 = s10Cards[2]; // บล็อคท้าย
+
+        const s9Title = document.querySelector('#slide9 .slide-title');
+        const s10Title = document.querySelector('#slide10 .slide-title');
+        const s9TextContent = document.querySelectorAll('#slide9 .card-icon, #slide9 h3, #slide9 p');
+
+        const s9Container = document.getElementById('slide9');
+        const s10Container = document.getElementById('slide10');
+
+        // เฟดข้อความในการ์ดหน้า 9 ออกไป
+        s9TextContent.forEach(el => { el.style.transition = 'opacity 0.3s ease'; el.style.opacity = '0'; });
+        if (s9Title) { s9Title.style.transition = 'opacity 0.3s ease'; s9Title.style.opacity = '0'; }
+
+        // เตรียมหน้า 10
+        const s10Card0Content = Array.from(s10Card0.children);
+        const s10Card2Content = Array.from(s10Card2.children);
+        
+        s10Card1.style.transition = 'none';
+        s10Card1.style.opacity = '0'; // ซ่อนบล็อคกลางไว้ก่อน
+        if (s10Title) { s10Title.style.transition = 'none'; s10Title.style.opacity = '0'; }
+        [...s10Card0Content, ...s10Card2Content].forEach(el => { el.style.transition = 'none'; el.style.opacity = '0'; });
+
+        setTimeout(() => {
+            s10Container.style.transition = 'none';
+            s10Container.style.opacity = '1';
+            s10Container.style.transform = 'translate(-50%, -50%) scale(1)';
+            s10Container.style.zIndex = '100';
+
+            const r9_0 = s9Card0.getBoundingClientRect();
+            const r10_0 = s10Card0.getBoundingClientRect();
+            
+            const r9_1 = s9Card1.getBoundingClientRect();
+            const r10_2 = s10Card2.getBoundingClientRect();
+
+            // ขยับกล่องหน้า 10 ไปทับกล่องหน้า 9
+            s10Card0.style.transition = 'none';
+            s10Card0.style.transformOrigin = 'top left';
+            s10Card0.style.transform = `translate(${r9_0.left - r10_0.left}px, ${r9_0.top - r10_0.top}px) scale(${r9_0.width / r10_0.width}, ${r9_0.height / r10_0.height})`;
+
+            s10Card2.style.transition = 'none';
+            s10Card2.style.transformOrigin = 'top left';
+            s10Card2.style.transform = `translate(${r9_1.left - r10_2.left}px, ${r9_1.top - r10_2.top}px) scale(${r9_1.width / r10_2.width}, ${r9_1.height / r10_2.height})`;
+
+            s9Card0.style.opacity = '0';
+            s9Card1.style.opacity = '0';
+
+            void s10Container.offsetWidth;
+
+            // เล่นอนิเมชันให้กล่องกลับมาที่เดิมในหน้า 10
+            s10Card0.style.transition = 'all 1.2s cubic-bezier(0.22, 1, 0.36, 1)';
+            s10Card0.style.transform = 'translate(0, 0) scale(1)';
+            s10Card2.style.transition = 'all 1.2s cubic-bezier(0.22, 1, 0.36, 1)';
+            s10Card2.style.transform = 'translate(0, 0) scale(1)';
+
+            // เฟดกล่องตรงกลางขึ้นมา
+            s10Card1.style.transition = 'opacity 1s ease 0.6s';
+            s10Card1.style.opacity = '1';
+
+            if (s10Title) {
+                s10Title.style.transition = 'opacity 1s ease 0.4s';
+                s10Title.style.opacity = '1';
+            }
+
+            [...s10Card0Content, ...s10Card2Content].forEach(el => {
+                el.style.transition = 'opacity 0.8s ease 0.4s';
+                el.style.opacity = '1';
+            });
+
+            setTimeout(() => {
+                s10Card0.style.cssText = '';
+                s10Card2.style.cssText = '';
+                s10Card1.style.cssText = '';
+                [...s10Card0Content, ...s10Card2Content].forEach(el => el.style.cssText = '');
+                if (s10Title) s10Title.style.cssText = '';
+
+                s9Card0.style.cssText = '';
+                s9Card1.style.cssText = '';
+                s9TextContent.forEach(el => el.style.cssText = '');
+                if (s9Title) s9Title.style.cssText = '';
+
+                currentSlide = 9;
+                updateSlides();
+                isAnimating = false;
+            }, 1500);
+
+        }, 400);
+    }
+
+    // --- SCRIPT 1.97: MAGIC MOVE (Slide 10 -> Slide 11) ---
+    function magicMove10to11() {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        const s10Cards = document.querySelectorAll('#slide10 .card');
+        const s10Card1 = s10Cards[1]; // บล็อคตรงกลาง
+        const s10OtherCards = [s10Cards[0], s10Cards[2]];
+        const s10Title = document.querySelector('#slide10 .slide-title');
+        const s10SubTitle = document.querySelector('#slide10 p');
+        
+        const s11ImgBox = document.querySelector('#slide11 .img-box');
+        const s11Texts = document.querySelector('#slide11 .grid-2-col > div:nth-child(2)');
+        const s11Title = document.querySelector('#slide11 .slide-title');
+        const s11ImgContent = s11ImgBox.querySelector('img');
+
+        const s10Container = document.getElementById('slide10');
+        const s11Container = document.getElementById('slide11');
+
+        s10OtherCards.forEach(c => { c.style.transition = 'opacity 0.4s ease'; c.style.opacity = '0'; });
+        if (s10Title) { s10Title.style.transition = 'opacity 0.4s ease'; s10Title.style.opacity = '0'; }
+        if (s10SubTitle) { s10SubTitle.style.transition = 'opacity 0.4s ease'; s10SubTitle.style.opacity = '0'; }
+        
+        // เฟดเนื้อหาในการ์ดกลางทิ้ง แต่เหลือกล่องเหลืองไว้ทำอนิเมชัน
+        const s10CardContent = Array.from(s10Card1.children);
+        s10CardContent.forEach(el => { el.style.transition = 'opacity 0.3s ease'; el.style.opacity = '0'; });
+
+        if (s11Texts) { s11Texts.style.transition = 'none'; s11Texts.style.opacity = '0'; }
+        if (s11Title) { s11Title.style.transition = 'none'; s11Title.style.opacity = '0'; }
+        if (s11ImgContent) { s11ImgContent.style.transition = 'none'; s11ImgContent.style.opacity = '0'; }
+
+        setTimeout(() => {
+            s11Container.style.transition = 'none';
+            s11Container.style.opacity = '1';
+            s11Container.style.transform = 'translate(-50%, -50%) scale(1)';
+            s11Container.style.zIndex = '100';
+
+            const r10 = s10Card1.getBoundingClientRect();
+            const r11 = s11ImgBox.getBoundingClientRect();
+
+            const dx = r10.left - r11.left;
+            const dy = r10.top - r11.top;
+            const sw = r10.width / r11.width;
+            const sh = r10.height / r11.height;
+
+            s11ImgBox.style.transition = 'none';
+            s11ImgBox.style.transformOrigin = 'top left';
+            s11ImgBox.style.transform = `translate(${dx}px, ${dy}px) scale(${sw}, ${sh})`;
+            s11ImgBox.style.background = '#ffffff';
+            s11ImgBox.style.borderTop = '6px solid #f59e0b'; // สีเหลืองของการ์ดต้นทาง
+            s11ImgBox.style.borderRadius = '20px';
+            s11ImgBox.style.boxShadow = '0 10px 30px rgba(0,0,0,0.04)';
+
+            s10Card1.style.opacity = '0';
+
+            void s11Container.offsetWidth;
+
+            // แปลงกล่องสีเหลืองไปเป็นกรอบสีดำในหน้า 11
+            s11ImgBox.style.transition = 'all 1.2s cubic-bezier(0.22, 1, 0.36, 1)';
+            s11ImgBox.style.transform = 'translate(0, 0) scale(1)';
+            s11ImgBox.style.background = '#1e1e1e';
+            s11ImgBox.style.borderTop = 'none';
+            s11ImgBox.style.borderRadius = '10px'; 
+            s11ImgBox.style.boxShadow = 'none'; 
+
+            if (s11Texts) {
+                s11Texts.style.transition = 'opacity 1s ease 0.5s';
+                s11Texts.style.opacity = '1';
+            }
+            if (s11Title) {
+                s11Title.style.transition = 'opacity 1s ease 0.5s';
+                s11Title.style.opacity = '1';
+            }
+            if (s11ImgContent) {
+                s11ImgContent.style.transition = 'opacity 1s ease 0.5s';
+                s11ImgContent.style.opacity = '1';
+            }
+
+            setTimeout(() => {
+                s11ImgBox.style.cssText = '';
+                if (s11Texts) s11Texts.style.cssText = '';
+                if (s11Title) s11Title.style.cssText = '';
+                if (s11ImgContent) s11ImgContent.style.cssText = '';
+
+                s10OtherCards.forEach(c => c.style.cssText = '');
+                s10Card1.style.cssText = '';
+                s10CardContent.forEach(el => el.style.cssText = '');
+                if (s10Title) s10Title.style.cssText = '';
+                if (s10SubTitle) s10SubTitle.style.cssText = '';
+
+                currentSlide = 10;
+                updateSlides();
+                isAnimating = false;
+            }, 1500);
+
+        }, 400);
+    }
+    // --- SCRIPT 1.98: MAGIC MOVE (Slide 11 -> Slide 12) ---
+    function magicMove11to12() {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        const s11ImgBox = document.querySelector('#slide11 .img-box');
+        const s11Texts = document.querySelectorAll('#slide11 p, #slide11 h3, #slide11 .slide-title');
+        const s11ImgContent = s11ImgBox.querySelector('img');
+        
+        const s12Cards = document.querySelectorAll('#slide12 .card');
+        const s12Title = document.querySelector('#slide12 .slide-title');
+        const s11Container = document.getElementById('slide11');
+        const s12Container = document.getElementById('slide12');
+
+        // 1. เฟดข้อความและรูปโค้ดในหน้า 11 ทิ้งไปก่อน ให้เหลือแต่กรอบสีดำ
+        s11Texts.forEach(el => { el.style.transition = 'opacity 0.4s ease'; el.style.opacity = '0'; });
+        if(s11ImgContent) { s11ImgContent.style.transition = 'opacity 0.4s ease'; s11ImgContent.style.opacity = '0'; }
+
+        // 2. เตรียมหน้า 12 ให้ข้อความโปร่งใสไว้
+        if(s12Title) { s12Title.style.transition = 'none'; s12Title.style.opacity = '0'; }
+        s12Cards.forEach(card => {
+            const content = Array.from(card.children);
+            content.forEach(el => { el.style.transition = 'none'; el.style.opacity = '0'; });
+        });
+
+        setTimeout(() => {
+            s12Container.style.transition = 'none';
+            s12Container.style.opacity = '1';
+            s12Container.style.transform = 'translate(-50%, -50%) scale(1)';
+            s12Container.style.zIndex = '100';
+
+            const rect11 = s11ImgBox.getBoundingClientRect();
+
+            // 3. จำแลงการ์ดหน้า 12 ทั้งสองใบ ให้ซ้อนกันอยู่ที่ตำแหน่งของกรอบดำหน้า 11
+            s12Cards.forEach((card, i) => {
+                const rect12 = card.getBoundingClientRect();
+                
+                const placeholder = document.createElement('div');
+                placeholder.id = 'placeholder-12-' + i;
+                placeholder.style.width = rect12.width + 'px';
+                placeholder.style.height = rect12.height + 'px';
+                card.parentNode.insertBefore(placeholder, card);
+
+                card.style.position = 'fixed';
+                card.style.top = rect11.top + 'px';
+                card.style.left = rect11.left + 'px';
+                card.style.width = rect11.width + 'px';
+                card.style.height = rect11.height + 'px';
+                
+                card.style.background = '#1e1e1e'; // เปลี่ยนเป็นสีดำเหมือนกรอบหน้า 11
+                card.style.border = 'none';
+                card.style.borderRadius = '10px';
+                card.style.boxShadow = 'none';
+                card.style.zIndex = '101';
+                card.style.margin = '0';
+            });
+
+            s11ImgBox.style.opacity = '0'; // ซ่อนกล่องต้นฉบับ
+
+            void s12Container.offsetWidth; // บังคับให้เบราว์เซอร์อัปเดตภาพ
+
+            // 4. แอนิเมชันให้กล่องดำ แยกร่างพุ่งไป 2 ฝั่ง แล้วสว่างขึ้นเป็นการ์ดสีขาว
+            s12Cards.forEach((card, i) => {
+                const rectDest = document.getElementById('placeholder-12-' + i).getBoundingClientRect();
+                
+                card.style.transition = 'all 1.2s cubic-bezier(0.22, 1, 0.36, 1)';
+                card.style.top = rectDest.top + 'px';
+                card.style.left = rectDest.left + 'px';
+                card.style.width = rectDest.width + 'px';
+                card.style.height = rectDest.height + 'px';
+                
+                card.style.background = '#ffffff'; // สว่างเป็นสีขาว
+                card.style.borderRadius = '20px';
+                card.style.boxShadow = '0 10px 30px rgba(0,0,0,0.04)';
+                card.style.border = '1px solid #f0f0f0';
+                
+                if(i === 0) card.style.borderTop = '6px solid #e04f33';
+                if(i === 1) card.style.borderTop = '6px solid #f59e0b';
+            });
+
+            // 5. เฟดข้อความหน้า 12 กลับมา
+            if(s12Title) {
+                s12Title.style.transition = 'opacity 1s ease 0.4s';
+                s12Title.style.opacity = '1';
+            }
+
+            s12Cards.forEach(card => {
+                const content = Array.from(card.children);
+                content.forEach(el => {
+                    el.style.transition = 'opacity 0.8s ease 0.6s';
+                    el.style.opacity = '1';
+                });
+            });
+
+            setTimeout(() => {
+                // คืนค่า CSS กลับเป็นปกติ ป้องกันบั๊กตอนกดย้อนกลับ
+                s12Cards.forEach((card, i) => {
+                    card.style.cssText = '';
+                    const content = Array.from(card.children);
+                    content.forEach(el => el.style.cssText = '');
+                    const ph = document.getElementById('placeholder-12-' + i);
+                    if(ph) ph.remove();
+                });
+
+                if(s12Title) s12Title.style.cssText = '';
+                s11ImgBox.style.cssText = '';
+                if(s11ImgContent) s11ImgContent.style.cssText = '';
+                s11Texts.forEach(el => el.style.cssText = '');
+
+                currentSlide = 11; // อัปเดตสไลด์เป็นหน้า 12 (Index 11)
+                updateSlides();
+                isAnimating = false;
+            }, 1500);
+
+        }, 400);
+    }
+    // --- SCRIPT 2: คลิกขยายข้อมูลหน้า 3 (FLIP Animation) ---
+    function toggleProblemCard(element) {
+        if (isAnimating) return;
+        const overlay = document.getElementById('problemsOverlay');
+        const grid = document.getElementById('problemsGrid');
+        
+        isAnimating = true;
+        element.classList.add('hide-texts');
+        
+        setTimeout(() => {
+            if (element.classList.contains('expanded')) {
+                const origRect = JSON.parse(element.dataset.origRect);
+                
+                element.style.top = origRect.top + 'px';
+                element.style.left = origRect.left + 'px';
+                element.style.width = origRect.width + 'px';
+                element.style.height = origRect.height + 'px';
+                
+                element.classList.remove('expanded');
+                overlay.classList.remove('active');
+                if (masterOverlay) masterOverlay.classList.remove('hidden-logo');
+                
+                setTimeout(() => {
+                    element.classList.remove('is-fixed');
+                    element.style.cssText = ''; 
+                    const placeholder = document.getElementById('card-placeholder-3');
+                    if(placeholder) placeholder.remove();
+                    grid.classList.remove('has-active');
+                    element.classList.remove('active');
+                    element.classList.remove('hide-texts');
+                    isAnimating = false;
+                }, 800);
+            } else {
+                const rect = element.getBoundingClientRect();
+                
+                element.dataset.origRect = JSON.stringify({ top: rect.top, left: rect.left, width: rect.width, height: rect.height });
+                
+                const placeholder = document.createElement('div');
+                placeholder.id = 'card-placeholder-3';
+                placeholder.style.flex = '1';
+                element.parentNode.insertBefore(placeholder, element);
+                
+                element.style.position = 'fixed';
+                element.style.top = rect.top + 'px';
+                element.style.left = rect.left + 'px';
+                element.style.width = rect.width + 'px';
+                element.style.height = rect.height + 'px';
+                element.classList.add('is-fixed');
+                
+                void element.offsetWidth; 
+                
+                grid.classList.add('has-active');
+                element.classList.add('active');
+                element.classList.add('expanded');
+                
+                element.style.top = '10vh';
+                element.style.left = '5vw';
+                element.style.width = '90vw';
+                element.style.height = '80vh';
+                
+                overlay.classList.add('active');
+                if (masterOverlay) masterOverlay.classList.add('hidden-logo');
+                
+                setTimeout(() => {
+                    element.classList.remove('hide-texts');
+                    isAnimating = false;
+                }, 800);
+            }
+        }, 300); 
+    }
+
+    // --- SCRIPT 2.5: คลิกขยายข้อมูลหน้า 8 (FLIP Animation) ---
+    function toggleTriangleCard(element) {
+        if (isAnimating) return;
+        const overlay = document.getElementById('triangleOverlay');
+        const grid = document.getElementById('triangleGrid');
+        
+        isAnimating = true;
+        element.classList.add('hide-texts');
+        grid.classList.add('hide-texts'); 
+        
+        setTimeout(() => {
+            if (element.classList.contains('expanded')) {
+                const origRect = JSON.parse(element.dataset.origRect);
+                
+                element.style.top = origRect.top + 'px';
+                element.style.left = origRect.left + 'px';
+                element.style.width = origRect.width + 'px';
+                element.style.height = origRect.height + 'px';
+                
+                element.classList.remove('expanded');
+                overlay.classList.remove('active');
+                if (masterOverlay) masterOverlay.classList.remove('hidden-logo');
+                
+                setTimeout(() => {
+                    element.classList.remove('is-fixed');
+                    element.style.cssText = ''; 
+                    const placeholder = document.getElementById('card-placeholder-8');
+                    if(placeholder) placeholder.remove();
+                    grid.classList.remove('has-active');
+                    element.classList.remove('active');
+                    element.classList.remove('hide-texts');
+                    grid.classList.remove('hide-texts'); 
+                    isAnimating = false;
+                }, 800);
+            } else {
+                const rect = element.getBoundingClientRect();
+                
+                element.dataset.origRect = JSON.stringify({ top: rect.top, left: rect.left, width: rect.width, height: rect.height });
+                
+                const placeholder = document.createElement('div');
+                placeholder.id = 'card-placeholder-8';
+                placeholder.style.width = rect.width + 'px';
+                placeholder.style.height = rect.height + 'px';
+                element.parentNode.insertBefore(placeholder, element);
+                
+                element.style.position = 'fixed';
+                element.style.top = rect.top + 'px';
+                element.style.left = rect.left + 'px';
+                element.style.width = rect.width + 'px';
+                element.style.height = rect.height + 'px';
+                element.classList.add('is-fixed');
+                
+                void element.offsetWidth; 
+                
+                grid.classList.add('has-active');
+                element.classList.add('active');
+                element.classList.add('expanded');
+                
+                element.style.top = '10vh';
+                element.style.left = '5vw';
+                element.style.width = '90vw';
+                element.style.height = '80vh';
+                
+                overlay.classList.add('active');
+                if (masterOverlay) masterOverlay.classList.add('hidden-logo');
+                
+                setTimeout(() => {
+                    element.classList.remove('hide-texts');
+                    isAnimating = false;
+                }, 800);
+            }
+        }, 300); 
+    }
+
+    // --- SCRIPT 3: Timeline V4 (หน้า 6) ---
+    function toggleTimelineCard(phase) {
+        if (isAnimating) return;
+        const timelineGrid = document.getElementById('timelineGrid');
+        const slide = document.getElementById('slide6');
+        
+        isAnimating = true;
+        timelineGrid.classList.add('hide-texts');
+        
+        setTimeout(() => {
+            slide.classList.add('expanded');
+            document.querySelectorAll('.detail-view').forEach(v => {
+                v.classList.remove('active');
+                v.classList.add('hide-texts');
+            });
+            
+            const targetView = document.getElementById('detail-phase-' + phase);
+            targetView.classList.add('active');
+            
+            setTimeout(() => {
+                targetView.classList.remove('hide-texts');
+                isAnimating = false;
+            }, 800); 
+        }, 300);
+    }
+
+    function closeTimelineDetail() {
+        if (isAnimating) return;
+        const timelineGrid = document.getElementById('timelineGrid');
+        const slide = document.getElementById('slide6');
+        const activeView = document.querySelector('.detail-view.active');
+        
+        isAnimating = true;
+        if(activeView) activeView.classList.add('hide-texts');
+        
+        setTimeout(() => {
+            slide.classList.remove('expanded');
+            setTimeout(() => {
+                if(activeView) activeView.classList.remove('active');
+                timelineGrid.classList.remove('hide-texts');
+                isAnimating = false;
+            }, 800);
+        }, 300);
+    }
+
+    // --- SCRIPT 4: ระบบนำทางหลัก ---
+    const slides = document.querySelectorAll('.slide-container');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const counter = document.getElementById('slideCounter');
+    let currentSlide = 0;
+
+    const updateSlides = () => {
+        slides.forEach((slide, index) => {
+            if (index === currentSlide) {
+                slide.style.opacity = '1';
+                slide.style.pointerEvents = 'auto';
+                slide.style.transform = 'translate(-50%, -50%) scale(1)';
+                slide.style.zIndex = '10';
+            } else if (index < currentSlide) {
+                slide.style.opacity = '0';
+                slide.style.pointerEvents = 'none';
+                slide.style.transform = 'translate(-50%, -55%) scale(1.05)';
+                slide.style.zIndex = '1';
+            } else {
+                slide.style.opacity = '0';
+                slide.style.pointerEvents = 'none';
+                slide.style.transform = 'translate(-50%, -45%) scale(0.95)';
+                slide.style.zIndex = '1';
+            }
+        });
+
+        if (currentSlide > 0) {
+            bangmodLogo.classList.add('minimized');
+        } else {
+            bangmodLogo.classList.remove('minimized');
+        }
+        
+        prevBtn.disabled = currentSlide === 0;
+        counter.innerText = `${currentSlide + 1} / ${slides.length}`;
+        nextBtn.disabled = currentSlide === slides.length - 1;
+    };
+
+    const goNext = () => {
+        if (isAnimating) return;
+        
+        if (masterOverlay) masterOverlay.classList.remove('hidden-logo');
+
+        if (currentSlide === 1) { magicMove2to3(); return; }
+        if (currentSlide === 2) { magicMove3to4(); return; } 
+        if (currentSlide === 3) { magicMove4to5(); return; } 
+        if (currentSlide === 4) { magicMove5to6(); return; } 
+        if (currentSlide === 5) { magicMove6to7(); return; }
+        if (currentSlide === 6) { magicMove7to8(); return; }
+        if (currentSlide === 7) { magicMove8to9(); return; } 
+        if (currentSlide === 8) { magicMove9to10(); return; } 
+        if (currentSlide === 9) { magicMove10to11(); return; } 
+        if (currentSlide === 10) { magicMove11to12(); return; }
+        if (currentSlide < slides.length - 1) { currentSlide++; updateSlides(); }
+    };
+
+    const goPrev = () => {
+        if (isAnimating) return;
+        
+        if (masterOverlay) masterOverlay.classList.remove('hidden-logo');
+
+        if (currentSlide > 0) {
+            currentSlide--;
+            
+            // รีเซ็ตการ์ดหน้า 3
+            const expandedCard3 = document.querySelector('#slide3 .problem-card.is-fixed');
+            if(expandedCard3) {
+                expandedCard3.classList.remove('is-fixed', 'hide-texts', 'expanded', 'active');
+                expandedCard3.style.cssText = '';
+                const p3 = document.getElementById('card-placeholder-3'); if(p3) p3.remove();
+                const o3 = document.getElementById('problemsOverlay'); if(o3) o3.classList.remove('active');
+                const g3 = document.getElementById('problemsGrid'); if(g3) g3.classList.remove('has-active');
+            }
+
+            // รีเซ็ตการ์ดหน้า 8
+            const expandedCard8 = document.querySelector('#slide8 .problem-card.is-fixed');
+            if(expandedCard8) {
+                expandedCard8.classList.remove('is-fixed', 'hide-texts', 'expanded', 'active');
+                expandedCard8.style.cssText = '';
+                const p8 = document.getElementById('card-placeholder-8'); if(p8) p8.remove();
+                const o8 = document.getElementById('triangleOverlay'); if(o8) o8.classList.remove('active');
+                const g8 = document.getElementById('triangleGrid'); if(g8) { g8.classList.remove('has-active'); g8.classList.remove('hide-texts'); }
+            }
+
+            // รีเซ็ตสถานะหน้า 6
+            const slide6 = document.getElementById('slide6');
+            if(slide6) {
+                slide6.classList.remove('expanded');
+                const tGrid = document.getElementById('timelineGrid');
+                if(tGrid) tGrid.classList.remove('hide-texts');
+                document.querySelectorAll('.detail-view').forEach(v => {
+                    v.classList.remove('active');
+                    v.classList.add('hide-texts');
+                });
+            }
+            
+            updateSlides();
+        }
+    };
+
+    updateSlides();
+    nextBtn.addEventListener('click', goNext);
+    prevBtn.addEventListener('click', goPrev);
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { goNext(); } 
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') { goPrev(); }
+    });
+</script>
+
+</body>
+</html>
